@@ -1,3 +1,5 @@
+/// TODO: REFACTOR CLASS FOR COMPETITION USE
+
 /*
  * Copyright (c) 2024 Phil Malone
  *
@@ -19,7 +21,7 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.Config;
 
 import android.util.Size;
 
@@ -61,8 +63,9 @@ import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
 @Disabled
 @TeleOp(name = "Concept: Vision Color-Sensor", group = "Concept")
-public class ConceptVisionColorSensor extends LinearOpMode
+public class ColorSensorController extends LinearOpMode
 {
+
     @Override
     public void runOpMode()
     {
@@ -89,17 +92,11 @@ public class ConceptVisionColorSensor extends LinearOpMode
          *     eg: Green may be reported as YELLOW, as this may be the "closest" match.
          */
 
-        /// TODO: REDEFINE THE COLOR SWATCH, YOU DON'T ALL OF THE COLORS. NOTE: THERE'S ONLY TWO YOU WOULD NEED.
         PredominantColorProcessor colorSensor = new PredominantColorProcessor.Builder()
                 .setRoi(ImageRegion.asUnityCenterCoordinates(-0.1, 0.1, 0.1, -0.1))
                 .setSwatches(
                         PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
-                        PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
-                        PredominantColorProcessor.Swatch.RED,
-                        PredominantColorProcessor.Swatch.BLUE,
-                        PredominantColorProcessor.Swatch.YELLOW,
-                        PredominantColorProcessor.Swatch.BLACK,
-                        PredominantColorProcessor.Swatch.WHITE)
+                        PredominantColorProcessor.Swatch.ARTIFACT_PURPLE)
                 .build();
 
         /*

@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Decode;
+
+import org.firstinspires.ftc.teamcode.Config.PIDController;
 
 //Handles auto path. Uses PID controllers to follow paths and reach target position.
 //Needs HardwareClass.
 //
-public class PedroPathing {
+public class PedroPathingTest {
     private final HardwareClass robot;
 
     private final PIDController xController; //forward/backward
@@ -20,7 +22,7 @@ public class PedroPathing {
 
     /// TODO: adjust values.
 
-    public PedroPathing(HardwareClass robot) { //constructor : create instances of class.
+    public PedroPathingTest(HardwareClass robot) { //constructor : create instances of class.
         this.robot = robot;
 
         xController = new PIDController(0.05, 0, 0.002); ///TODO: adjust values
@@ -40,9 +42,9 @@ public class PedroPathing {
         double yError = targetY - currentY;
         double headingError = normalizeAngle(targetHeadng - currentHeading);
 
-        double xPower = xController.CalculateX(targetX, currentX);
-        double yPower = yController.CalculateY(targetY, currentY);
-        double turnPower = headingController.CalculateTurn(targetHeadng, currentHeading);
+        double xPower = xController.calculateError(targetX, currentX);
+        double yPower = yController.calculateError(targetY, currentY);
+        double turnPower = headingController.calculateError(targetHeadng, currentHeading);
 
         double robotX = xPower * Math.cos(-Math.toRadians(currentHeading)) - yPower * Math.sin(-Math.toRadians(currentHeading));
         double robotY = yPower * Math.sin(-Math.toRadians(currentHeading)) + yPower * Math.cos(-Math.toRadians(currentHeading));
@@ -60,7 +62,7 @@ public class PedroPathing {
 
     public boolean turnToHeading(double targetHeading) {
         double headingError = normalizeAngle(targetHeading - currentHeading);
-        double turnPower = headingController.CalculateX(targetHeading, currentHeading);
+        double turnPower = headingController.calculateError(targetHeading, currentHeading);
 
         setDrivePowers(0, 0, turnPower);
         return Math.abs(headingError) < headingTolerance;
