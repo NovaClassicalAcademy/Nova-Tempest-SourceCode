@@ -41,8 +41,11 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /*
  * This OpMode illustrates using a camera to locate and drive towards a specific AprilTag.
@@ -85,7 +88,7 @@ import java.util.concurrent.TimeUnit;
 
 @TeleOp(name="Tank Drive To AprilTag", group = "Concept")
 @Disabled
-public class AprilTagger extends LinearOpMode
+public class AprilTagController extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
 
@@ -96,6 +99,29 @@ public class AprilTagger extends LinearOpMode
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
+    private final List<Integer> _decodeTags;
+    private final WebcamName _camera;
+
+    public AprilTagController(WebcamName camera){
+        _camera = camera;
+
+        _decodeTags = List.of(21, 22, 23);
+    }
+
+    private int ScanForTag(List<Integer> desiredIDs){
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections){
+            if (detection.metadata != null){
+                int scannedID = detection.id;
+
+                if (desiredIDs.contains(scannedID)){
+                    return scannedID;
+                }
+            }
+        }
+
+        return 0;
+    }
 
     @Override public void runOpMode()
     {
@@ -222,5 +248,13 @@ public class AprilTagger extends LinearOpMode
             telemetry.addData("Camera", "Ready");
             telemetry.update();
         }
+    }
+
+    public int getBallPattern(){
+        return ScanForTag(_decodeTags);
+    }
+
+    public int getTowerCode(int desiredTowerID){
+        return ScanForTag(List.of(desiredTowerID));
     }
 }

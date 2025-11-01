@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.Decode;
 
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class HardwareClass {
@@ -15,7 +17,7 @@ public class HardwareClass {
     public DcMotor YRightEncoder = null;
     public DcMotor XEncoder = null;
     public Servo RouletteServo = null;
-    public ColorSensor ColorSensor = null;
+    public NormalizedColorSensor ColorSensor = null;
 
     public void Init(HardwareMap hardwareMap){
 
@@ -26,7 +28,7 @@ public class HardwareClass {
 
         RouletteServo = hardwareMap.get(Servo.class, "RouletteServo");
 
-        ColorSensor = hardwareMap.get(ColorSensor.class, "ColorSensor");
+        ColorSensor = hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");
 
         FrontLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         FrontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);

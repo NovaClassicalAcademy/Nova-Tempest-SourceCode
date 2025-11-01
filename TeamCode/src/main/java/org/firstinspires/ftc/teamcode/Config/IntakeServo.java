@@ -58,17 +58,21 @@ public class IntakeServo extends LinearOpMode {
     static final double MIN_POS     =  0.0;     // Minimum rotational position
 
     // Define class members
-    Servo   servo;
+    Servo   _intake1;
+    Servo _intake2;
     double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
     boolean rampUp = true;
-
-
+    public IntakeServo (Servo intake1, Servo intake2){
+        _intake1 = intake1;
+        _intake2 = intake2;
+    }
     @Override
     public void runOpMode() {
 
         // Connect to servo (Assume Robot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        servo = hardwareMap.get(Servo.class, "left_hand");
+        _intake1 = hardwareMap.get(Servo.class, "IntakeServo1");
+        _intake2 = hardwareMap.get(Servo.class, "IntakeServo2");
 
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
