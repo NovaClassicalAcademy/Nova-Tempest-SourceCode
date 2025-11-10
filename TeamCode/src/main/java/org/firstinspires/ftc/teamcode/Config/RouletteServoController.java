@@ -75,10 +75,9 @@ public class RouletteServoController extends LinearOpMode {
     private final double _position1 = 0.0;
     private final double _position2 = 0.1;
     private final double _position3 = 0.3;
-    private final double get_position3 = 0.2; ///TODO: these values need to be adjusted once we find the values.
-    private ArtifactColor[] _colorPosition;
+    private final double get_position3 = 0.2; ///TODO: these values need to be adjusted once we find the values. what is this?
 
-    ///TODO: work on how to make dictionaries.
+    private ArtifactColor[] _colorPosition;
 
     public RouletteServoController(Servo servo, ColorSensorController colorSensor){
         _servo = servo;

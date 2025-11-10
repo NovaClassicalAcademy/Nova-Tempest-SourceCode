@@ -48,72 +48,42 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-@TeleOp(name = "Concept: Scan Servo", group = "Concept")
-@Disabled
-public class IntakeServo extends LinearOpMode {
+public class IntakeServo {
 
-    static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
-    static final int    CYCLE_MS    =   50;     // period of each cycle
-    static final double MAX_POS     =  1.0;     // Maximum rotational position
-    static final double MIN_POS     =  0.0;     // Minimum rotational position
+    static final double STOP = 0.5;
+    static final double INTAKE = 1.0;
+    Servo   _upperLeftIntake;
+    Servo _upperRightIntake;
+    Servo _lowerLeftIntake;
+    Servo _lowerRightIntake;
+    public IntakeServo (Servo upperLeftIntake, Servo upperRightIntake, Servo lowerLeftIntake, Servo lowerRightIntake) {
+        _upperLeftIntake = upperLeftIntake;
+        _upperRightIntake = upperRightIntake;
+        _lowerLeftIntake = lowerLeftIntake;
+        _lowerRightIntake = lowerRightIntake;
 
-    // Define class members
-    Servo   _intake1;
-    Servo _intake2;
-    double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
-    boolean rampUp = true;
-    public IntakeServo (Servo intake1, Servo intake2){
-        _intake1 = intake1;
-        _intake2 = intake2;
+        stop();
     }
-    @Override
-    public void runOpMode() {
 
-        // Connect to servo (Assume Robot Left Hand)
-        // Change the text in quotes to match any servo name on your robot.
-        _intake1 = hardwareMap.get(Servo.class, "IntakeServo1");
-        _intake2 = hardwareMap.get(Servo.class, "IntakeServo2");
+    public void startIntake(){
+        _upperLeftIntake.setPosition(INTAKE);
+        _upperRightIntake.setPosition(INTAKE);
+        _lowerLeftIntake.setPosition(INTAKE);
+        _lowerRightIntake.setPosition(INTAKE);
+    }
 
-        // Wait for the start button
-        telemetry.addData(">", "Press Start to scan Servo." );
-        telemetry.update();
-        waitForStart();
+    public void stop(){
+        _upperLeftIntake.setPosition(STOP);
+        _upperRightIntake.setPosition(STOP);
+        _lowerLeftIntake.setPosition(STOP);
+        _lowerRightIntake.setPosition(STOP);
+    }
 
-
-        // Scan servo till stop pressed.
-        while(opModeIsActive()){
-
-            // slew the servo, according to the rampUp (direction) variable.
-            if (rampUp) {
-                // Keep stepping up until we hit the max value.
-                position += INCREMENT ;
-                if (position >= MAX_POS ) {
-                    position = MAX_POS;
-                    rampUp = !rampUp;   // Switch ramp direction
-                }
-            }
-            else {
-                // Keep stepping down until we hit the min value.
-                position -= INCREMENT ;
-                if (position <= MIN_POS ) {
-                    position = MIN_POS;
-                    rampUp = !rampUp;  // Switch ramp direction
-                }
-            }
-
-            // Display the current value
-            telemetry.addData("Servo Position", "%5.2f", position);
-            telemetry.addData(">", "Press Stop to end test." );
-            telemetry.update();
-
-            // Set the servo to the new position and pause;
-            servo.setPosition(position);
-            sleep(CYCLE_MS);
-            idle();
-        }
-
-        // Signal done;
-        telemetry.addData(">", "Done");
-        telemetry.update();
+    public void startIntake(double speed){
+        speed = Math.max(0.5, Math.min(1.0, speed));
+        _upperLeftIntake.setPosition(speed);
+        _upperRightIntake.setPosition(speed);
+        _lowerLeftIntake.setPosition(speed);
+        _lowerRightIntake.setPosition(speed);
     }
 }

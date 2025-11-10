@@ -76,7 +76,6 @@ public class AprilTagOptimizer extends LinearOpMode
     private int     myGain      ;
     private int     minGain ;
     private int     maxGain ;
-
     boolean thisExpUp = false;
     boolean thisExpDn = false;
     boolean thisGainUp = false;
@@ -163,7 +162,7 @@ public class AprilTagOptimizer extends LinearOpMode
 
         // Create the WEBCAM vision portal by using a builder.
         visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1")) /// TODO: GET ACTUAL CAMERA MAP NAME
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(aprilTag)
                 .build();
     }

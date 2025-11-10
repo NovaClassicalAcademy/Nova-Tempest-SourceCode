@@ -75,15 +75,30 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Disabled
 public class ColorSensorController extends LinearOpMode {
 
-  /** The colorSensor field will contain a reference to our color sensor hardware object */
+  /**
+   * The colorSensor field will contain a reference to our color sensor hardware object
+   */
   NormalizedColorSensor _colorSensor;
 
-  /** The relativeLayout field is used to aid in providing interesting visual feedback
+  /**
+   * The relativeLayout field is used to aid in providing interesting visual feedback
    * in this sample application; you probably *don't* need this when you use a color sensor on your
-   * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller. */
+   * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller.
+   */
   View relativeLayout;
 
-  public ColorSensorController(NormalizedColorSensor colorSensor){
+  /// TODO: Adjust value based on lighting and sensor.
+  private static final float MIN_SATURATION = 0.3f;
+  private static final float MIN_VALUE = 0.2f;
+
+  private static final float GREEN_HUE_MIN = 80f;
+  private static final float GREEN_HUE_MAX = 160f;
+
+  private static final float PURPLE_HUE_MIN = 270f;
+  private static final float PURPLE_HUE_MAX = 320f;
+
+
+  public ColorSensorController(NormalizedColorSensor colorSensor) {
     _colorSensor = colorSensor;
   }
   /*
@@ -97,7 +112,8 @@ public class ColorSensorController extends LinearOpMode {
    * the former from the latter in separate methods.
    */
 
-  @Override public void runOpMode() {
+  @Override
+  public void runOpMode() {
 
     // Get a reference to the RelativeLayout so we can later change the background
     // color of the Robot Controller app to match the hue detected by the RGB sensor.
@@ -116,10 +132,10 @@ public class ColorSensorController extends LinearOpMode {
           relativeLayout.setBackgroundColor(Color.WHITE);
         }
       });
-      }
+    }
   }
 
-  ///TODO: test gain value in bright and dim conditions to get a use a median range reliable w/o testing
+  /// TODO: test gain value in bright and dim conditions to get a use a median range reliable w/o testing
   protected void runSample() {
     // You can give the sensor a gain value, will be multiplied by the sensor's raw value before the
     // normalized color values are calculated. Color sensors (especially the REV Color Sensor V3)
@@ -151,7 +167,7 @@ public class ColorSensorController extends LinearOpMode {
     // If possible, turn the light on in the beginning (it might already be on anyway,
     // we just make sure it is if we can).
     if (_colorSensor instanceof SwitchableLight) {
-      ((SwitchableLight)_colorSensor).enableLight(true);
+      ((SwitchableLight) _colorSensor).enableLight(true);
     }
 
     // Wait for the start button to be pressed.
@@ -186,7 +202,7 @@ public class ColorSensorController extends LinearOpMode {
         // If the button is (now) down, then toggle the light
         if (xButtonCurrentlyPressed) {
           if (_colorSensor instanceof SwitchableLight) {
-            SwitchableLight light = (SwitchableLight)_colorSensor;
+            SwitchableLight light = (SwitchableLight) _colorSensor;
             light.enableLight(!light.isLightOn());
           }
         }
@@ -214,6 +230,9 @@ public class ColorSensorController extends LinearOpMode {
               .addData("Value", "%.3f", hsvValues[2]);
       telemetry.addData("Alpha", "%.3f", colors.alpha);
 
+      ArtifactColor detectedColor = GetColor();
+      telemetry.addData("Detected Color", detectedColor.toString());
+
       /* If this color sensor also has a distance sensor, display the measured distance.
        * Note that the reported distance is only useful at very close range, and is impacted by
        * ambient light and surface reflectivity. */
@@ -232,8 +251,35 @@ public class ColorSensorController extends LinearOpMode {
     }
   }
 
-  public ArtifactColor GetColor(){
-    ///TODO: Find min and max of hsv values to set what artifact color to return.
+  public ArtifactColor GetColor() {
+
+    if (_colorSensor instanceof DistanceSensor) {
+      double distance = ((DistanceSensor) _colorSensor).getDistance(DistanceUnit.CM);
+
+      if (distance > 10.0){
+        return ArtifactColor.UNKNOWN;
+      }
+    }
+
+    NormalizedRGBA colors = _colorSensor.getNormalizedColors();
+
+    float[] hsvValues = new float[3];
+    Color.colorToHSV(colors.toColor(), hsvValues);
+
+    float hue = hsvValues[0];
+    float saturation = hsvValues[1];
+    float value = hsvValues[2];
+
+    if (saturation < MIN_SATURATION || value < MIN_VALUE) {
+      return ArtifactColor.UNKNOWN;
+    }
+
+    if (hue >= GREEN_HUE_MAX && hue <= GREEN_HUE_MIN) {
+      return ArtifactColor.GREEN;
+    }
+    if (hue >= PURPLE_HUE_MAX && hue <= PURPLE_HUE_MIN) {
+      return ArtifactColor.PURPLE;
+    }
     return ArtifactColor.UNKNOWN;
   }
 }
