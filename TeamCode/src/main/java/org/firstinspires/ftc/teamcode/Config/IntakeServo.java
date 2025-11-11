@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /*
@@ -50,13 +51,13 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 public class IntakeServo {
 
-    static final double STOP = 0.5;
+    static final double STOP = 0.0;
     static final double INTAKE = 1.0;
-    Servo   _upperLeftIntake;
-    Servo _upperRightIntake;
-    Servo _lowerLeftIntake;
-    Servo _lowerRightIntake;
-    public IntakeServo (Servo upperLeftIntake, Servo upperRightIntake, Servo lowerLeftIntake, Servo lowerRightIntake) {
+    CRServo _upperLeftIntake;
+    CRServo _upperRightIntake;
+    CRServo _lowerLeftIntake;
+    CRServo _lowerRightIntake;
+    public IntakeServo (CRServo upperLeftIntake, CRServo upperRightIntake, CRServo lowerLeftIntake, CRServo lowerRightIntake) {
         _upperLeftIntake = upperLeftIntake;
         _upperRightIntake = upperRightIntake;
         _lowerLeftIntake = lowerLeftIntake;
@@ -64,26 +65,16 @@ public class IntakeServo {
 
         stop();
     }
-
     public void startIntake(){
-        _upperLeftIntake.setPosition(INTAKE);
-        _upperRightIntake.setPosition(INTAKE);
-        _lowerLeftIntake.setPosition(INTAKE);
-        _lowerRightIntake.setPosition(INTAKE);
+        _upperLeftIntake.setPower(INTAKE);
+        _upperRightIntake.setPower(INTAKE);
+        _lowerLeftIntake.setPower(INTAKE);
+        _lowerRightIntake.setPower(INTAKE);
     }
-
     public void stop(){
-        _upperLeftIntake.setPosition(STOP);
-        _upperRightIntake.setPosition(STOP);
-        _lowerLeftIntake.setPosition(STOP);
-        _lowerRightIntake.setPosition(STOP);
-    }
-
-    public void startIntake(double speed){
-        speed = Math.max(0.5, Math.min(1.0, speed));
-        _upperLeftIntake.setPosition(speed);
-        _upperRightIntake.setPosition(speed);
-        _lowerLeftIntake.setPosition(speed);
-        _lowerRightIntake.setPosition(speed);
+        _upperLeftIntake.setPower(STOP);
+        _upperRightIntake.setPower(STOP);
+        _lowerLeftIntake.setPower(STOP);
+        _lowerRightIntake.setPower(STOP);
     }
 }

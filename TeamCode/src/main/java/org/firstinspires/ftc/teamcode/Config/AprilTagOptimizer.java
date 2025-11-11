@@ -85,6 +85,13 @@ public class AprilTagOptimizer extends LinearOpMode
     boolean lastExpDn = false;
     boolean lastGainUp = false;
     boolean lastGainDn = false;
+
+    private final WebcamName _camera;
+
+    public AprilTagOptimizer(WebcamName camera) {
+        _camera = camera;
+    }
+
     @Override public void runOpMode()
     {
         // Initialize the Apriltag Detection process

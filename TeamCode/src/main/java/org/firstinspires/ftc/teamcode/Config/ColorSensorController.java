@@ -42,6 +42,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /*
@@ -91,11 +92,11 @@ public class ColorSensorController extends LinearOpMode {
   private static final float MIN_SATURATION = 0.3f;
   private static final float MIN_VALUE = 0.2f;
 
-  private static final float GREEN_HUE_MIN = 80f;
-  private static final float GREEN_HUE_MAX = 160f;
+  private static final float GREEN_HUE_MIN = 120;
+  private static final float GREEN_HUE_MAX = 180;
 
-  private static final float PURPLE_HUE_MIN = 270f;
-  private static final float PURPLE_HUE_MAX = 320f;
+  private static final float PURPLE_HUE_MIN = 180;
+  private static final float PURPLE_HUE_MAX = 250;
 
 
   public ColorSensorController(NormalizedColorSensor colorSensor) {
@@ -230,7 +231,7 @@ public class ColorSensorController extends LinearOpMode {
               .addData("Value", "%.3f", hsvValues[2]);
       telemetry.addData("Alpha", "%.3f", colors.alpha);
 
-      ArtifactColor detectedColor = GetColor();
+      ArtifactColor detectedColor = GetColor(telemetry);
       telemetry.addData("Detected Color", detectedColor.toString());
 
       /* If this color sensor also has a distance sensor, display the measured distance.
@@ -251,12 +252,12 @@ public class ColorSensorController extends LinearOpMode {
     }
   }
 
-  public ArtifactColor GetColor() {
-
+  public ArtifactColor GetColor(Telemetry tel) {
     if (_colorSensor instanceof DistanceSensor) {
       double distance = ((DistanceSensor) _colorSensor).getDistance(DistanceUnit.CM);
 
-      if (distance > 10.0){
+      tel.addData("Distance", distance);
+      if (distance > 2.0){
         return ArtifactColor.UNKNOWN;
       }
     }
@@ -270,14 +271,19 @@ public class ColorSensorController extends LinearOpMode {
     float saturation = hsvValues[1];
     float value = hsvValues[2];
 
+    tel.addData("Color Value", colors.toString());
+    tel.addData("Hue", hue);
+    tel.addData("Saturation", saturation);
+    tel.addData("Value", value);
+
     if (saturation < MIN_SATURATION || value < MIN_VALUE) {
       return ArtifactColor.UNKNOWN;
     }
 
-    if (hue >= GREEN_HUE_MAX && hue <= GREEN_HUE_MIN) {
+    if (hue > GREEN_HUE_MIN && hue < GREEN_HUE_MAX) {
       return ArtifactColor.GREEN;
     }
-    if (hue >= PURPLE_HUE_MAX && hue <= PURPLE_HUE_MIN) {
+    if (hue >= PURPLE_HUE_MIN && hue <= PURPLE_HUE_MAX) {
       return ArtifactColor.PURPLE;
     }
     return ArtifactColor.UNKNOWN;

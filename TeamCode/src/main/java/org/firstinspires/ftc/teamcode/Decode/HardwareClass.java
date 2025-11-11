@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode.Decode;
 
-import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Config.IntakeServo;
-import org.firstinspires.ftc.teamcode.Config.OutputServo;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 public class HardwareClass {
     public DcMotor FrontLeftDrive = null;
@@ -20,12 +18,13 @@ public class HardwareClass {
     public DcMotor YRightEncoder = null;
     public DcMotor XEncoder = null;
     public Servo RouletteServo = null;
-    public Servo IntakeLowerLeft = null;
-    public Servo IntakeLowerRight = null;
-    public Servo IntakeUpperLeft = null;
-    public Servo IntakeUpperRight = null;
-    public Servo OutputServo = null;
+    public CRServo IntakeLowerLeft = null;
+    public CRServo IntakeLowerRight = null;
+    public CRServo IntakeUpperLeft = null;
+    public CRServo IntakeUpperRight = null;
+    public DcMotor ShooterMotor = null;
     public NormalizedColorSensor NormalizedColorSensor = null;
+    public WebcamName WebCam = null;
 
     public void Init(HardwareMap hardwareMap){
 
@@ -34,18 +33,22 @@ public class HardwareClass {
         BackLeftDrive = hardwareMap.get(DcMotor.class, "BackLeft");
         BackRightDrive = hardwareMap.get(DcMotor.class, "BackRight");
 
-        YLeftEncoder = hardwareMap.get(DcMotor.class, "VertEncoder1");
-        YRightEncoder = hardwareMap.get(DcMotor.class, "VertEncoder2");
-        XEncoder = hardwareMap.get(DcMotor.class, "StrafeEncoder");
+        YLeftEncoder = hardwareMap.get(DcMotor.class, "YLeftEncoder");
+        YRightEncoder = hardwareMap.get(DcMotor.class, "YRightEncoder");
+        XEncoder = hardwareMap.get(DcMotor.class, "XEncoder");
 
-        IntakeLowerLeft = hardwareMap.get(Servo.class, "IntakeLowerLeft");
-        IntakeLowerRight = hardwareMap.get(Servo.class, "IntakeLowerRight");
+        IntakeLowerLeft = hardwareMap.get(CRServo.class, "IntakeLowerLeft");
+        IntakeLowerRight = hardwareMap.get(CRServo.class, "IntakeLowerRight");
+        IntakeUpperLeft = hardwareMap.get(CRServo.class, "IntakeUpperLeft");
+        IntakeUpperRight = hardwareMap.get(CRServo.class, "IntakeUpperRight");
 
-        OutputServo = hardwareMap.get(Servo.class, "Chuck Servo");
+        ShooterMotor = hardwareMap.get(DcMotor.class, "ShooterMotor");
 
         RouletteServo = hardwareMap.get(Servo.class, "RouletteServo");
 
         NormalizedColorSensor = hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");
+
+        WebCam = hardwareMap.get(WebcamName.class, "WebCam");
 
         FrontLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         FrontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -74,11 +77,11 @@ public class HardwareClass {
         BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        IntakeLowerLeft.setDirection(Servo.Direction.FORWARD); //spin normal (clock-wise)
-        IntakeLowerRight.setDirection(Servo.Direction.REVERSE); //spin reverse
-        IntakeUpperLeft.setDirection(Servo.Direction.FORWARD); //spin normal
-        IntakeUpperRight.setDirection(Servo.Direction.REVERSE); //spin reverse
+        IntakeLowerLeft.setDirection(CRServo.Direction.FORWARD); //spin normal (clock-wise)
+        IntakeLowerRight.setDirection(CRServo.Direction.REVERSE); //spin reverse
+        IntakeUpperLeft.setDirection(CRServo.Direction.REVERSE); //spin normal
+        IntakeUpperRight.setDirection(CRServo.Direction.REVERSE); //spin reverse
 
-        OutputServo.setDirection(Servo.Direction.REVERSE); //spin opposite way to chuck out.
+        ShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 }

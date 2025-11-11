@@ -33,9 +33,7 @@
 
 package org.firstinspires.ftc.teamcode.Config;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /*
@@ -52,18 +50,23 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-@TeleOp(name = "Concept: Scan Servo", group = "Concept")
-@Disabled
-public class OutputServo {
-
-
-
+public class ShooterMotor {
+    static final double STOP = 0.0;
+    static final double INTAKE = 5.0;
     // Define class members
-    Servo   _outputServo;
+    DcMotor _shooterMotor;
 
-    public OutputServo(Servo outputServo) {
-        _outputServo = outputServo;
+    public ShooterMotor(DcMotor shooterMotor) {
+        _shooterMotor = shooterMotor;
+
+        stop();
     }
 
+    public void startOutput() {
+        _shooterMotor.setPower(INTAKE);
+    }
 
+    public void stop() {
+        _shooterMotor.setPower(STOP);
+    }
 }

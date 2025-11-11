@@ -4,10 +4,8 @@ import org.firstinspires.ftc.teamcode.Config.PIDController;
 
 //Handles auto path. Uses PID controllers to follow paths and reach target position.
 //Needs HardwareClass.
-//
 public class PedroPathingTest {
     private final HardwareClass robot;
-
     private final PIDController xController; //forward/backward
     private final PIDController yController; //left/right strafe
     private final PIDController headingController; //rotation

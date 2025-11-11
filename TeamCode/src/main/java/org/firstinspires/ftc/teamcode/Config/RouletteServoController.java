@@ -95,7 +95,7 @@ public class RouletteServoController extends LinearOpMode {
 
         while (position < 3){
             MoveToPosition(position);
-            ArtifactColor color = _colorSensor.GetColor();
+            ArtifactColor color = _colorSensor.GetColor(telemetry);
             SetColorPosition(position, color);
             position++;
         }
@@ -106,7 +106,7 @@ public class RouletteServoController extends LinearOpMode {
         }
         _colorPosition[position] = color;
     }
-    private void MoveToPosition(int position){
+    public void MoveToPosition(int position){
         if (position > 2 || position < 0){
             throw new IndexOutOfBoundsException("Value should be between 1 and 3");
         }
