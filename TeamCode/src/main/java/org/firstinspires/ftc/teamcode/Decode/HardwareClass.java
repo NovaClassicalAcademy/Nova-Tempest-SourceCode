@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -25,6 +26,7 @@ public class HardwareClass {
     public DcMotor ShooterMotor = null;
     public NormalizedColorSensor NormalizedColorSensor = null;
     public WebcamName WebCam = null;
+    public IMU Imu = null;
 
     public void Init(HardwareMap hardwareMap){
 
@@ -33,6 +35,7 @@ public class HardwareClass {
         BackLeftDrive = hardwareMap.get(DcMotor.class, "BackLeft");
         BackRightDrive = hardwareMap.get(DcMotor.class, "BackRight");
 
+        Imu = hardwareMap.get(IMU.class, "imu");
         YLeftEncoder = hardwareMap.get(DcMotor.class, "YLeftEncoder");
         YRightEncoder = hardwareMap.get(DcMotor.class, "YRightEncoder");
         XEncoder = hardwareMap.get(DcMotor.class, "XEncoder");
@@ -42,7 +45,7 @@ public class HardwareClass {
         IntakeUpperLeft = hardwareMap.get(CRServo.class, "IntakeUpperLeft");
         IntakeUpperRight = hardwareMap.get(CRServo.class, "IntakeUpperRight");
 
-        ShooterMotor = hardwareMap.get(DcMotor.class, "ShooterMotor");
+        ShooterMotor = hardwareMap.get(DcMotor.class, "Goat");
 
         RouletteServo = hardwareMap.get(Servo.class, "RouletteServo");
 
@@ -50,10 +53,14 @@ public class HardwareClass {
 
         WebCam = hardwareMap.get(WebcamName.class, "WebCam");
 
-        FrontLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        FrontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        BackLeftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        BackRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        FrontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        FrontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        BackLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        BackRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        YLeftEncoder.setDirection(DcMotorSimple.Direction.FORWARD);
+        YRightEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
+        XEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
 
         FrontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FrontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -66,16 +73,16 @@ public class HardwareClass {
         BackRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         YLeftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        YLeftEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        YLeftEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         YRightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        YRightEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        YRightEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         XEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        XEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        XEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FrontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FrontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BackLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BackRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         IntakeLowerLeft.setDirection(CRServo.Direction.FORWARD); //spin normal (clock-wise)
         IntakeLowerRight.setDirection(CRServo.Direction.REVERSE); //spin reverse

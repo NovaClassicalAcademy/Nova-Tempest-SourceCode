@@ -80,25 +80,20 @@ public class ColorSensorController extends LinearOpMode {
    * The colorSensor field will contain a reference to our color sensor hardware object
    */
   NormalizedColorSensor _colorSensor;
+  View relativeLayout;
 
   /**
    * The relativeLayout field is used to aid in providing interesting visual feedback
    * in this sample application; you probably *don't* need this when you use a color sensor on your
    * robot. Note that you won't see anything change on the Driver Station, only on the Robot Controller.
    */
-  View relativeLayout;
 
   /// TODO: Adjust value based on lighting and sensor.
-  private static final float MIN_SATURATION = 0.3f;
-  private static final float MIN_VALUE = 0.2f;
+  private static final float GREEN_HUE_MIN = 145;
+  private static final float GREEN_HUE_MAX = 185;
 
-  private static final float GREEN_HUE_MIN = 120;
-  private static final float GREEN_HUE_MAX = 180;
-
-  private static final float PURPLE_HUE_MIN = 180;
+  private static final float PURPLE_HUE_MIN = 220;
   private static final float PURPLE_HUE_MAX = 250;
-
-
   public ColorSensorController(NormalizedColorSensor colorSensor) {
     _colorSensor = colorSensor;
   }
@@ -146,7 +141,7 @@ public class ColorSensorController extends LinearOpMode {
     // colors will report at or near 1, and you won't be able to determine what color you are
     // actually looking at. For this reason, it's better to err on the side of a lower gain
     // (but always greater than  or equal to 1).
-    float gain = 2;
+    float gain = 0.3f;
 
     // Once per loop, we will update this hsvValues array. The first element (0) will contain the
     // hue, the second element (1) will contain the saturation, and the third element (2) will
@@ -167,11 +162,13 @@ public class ColorSensorController extends LinearOpMode {
 
     // If possible, turn the light on in the beginning (it might already be on anyway,
     // we just make sure it is if we can).
+
+    // Wait for the start button to be pressed.
+
     if (_colorSensor instanceof SwitchableLight) {
       ((SwitchableLight) _colorSensor).enableLight(true);
     }
 
-    // Wait for the start button to be pressed.
     waitForStart();
 
     // Loop until we are asked to stop
@@ -184,12 +181,12 @@ public class ColorSensorController extends LinearOpMode {
       if (gamepad1.a) {
         // Only increase the gain by a small amount, since this loop will occur multiple times per second.
         gain += 0.005;
-      } else if (gamepad1.b && gain > 1) { // A gain of less than 1 will make the values smaller, which is not helpful.
+      } else if (gamepad1.b && gain > 0.1) { // A gain of less than 1 will make the values smaller, which is not helpful.
         gain -= 0.005;
       }
 
       // Show the gain value via telemetry
-      telemetry.addData("Gain", gain);
+      telemetry.addData("Gain", "%.3f", gain);
 
       // Tell the sensor our desired gain value (normally you would do this during initialization,
       // not during the loop)
@@ -229,16 +226,17 @@ public class ColorSensorController extends LinearOpMode {
               .addData("Hue", "%.3f", hsvValues[0])
               .addData("Saturation", "%.3f", hsvValues[1])
               .addData("Value", "%.3f", hsvValues[2]);
-      telemetry.addData("Alpha", "%.3f", colors.alpha);
 
       ArtifactColor detectedColor = GetColor(telemetry);
-      telemetry.addData("Detected Color", detectedColor.toString());
+      telemetry.addData("Detected", detectedColor.toString());
+      telemetry.addData("Confidence", getConfidenceLevel(hsvValues[1], hsvValues[2]));
 
       /* If this color sensor also has a distance sensor, display the measured distance.
        * Note that the reported distance is only useful at very close range, and is impacted by
        * ambient light and surface reflectivity. */
       if (_colorSensor instanceof DistanceSensor) {
-        telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) _colorSensor).getDistance(DistanceUnit.CM));
+        double distance = ((DistanceSensor) _colorSensor).getDistance(DistanceUnit.CM);
+        telemetry.addData("Distance (cm)", "%.2f", distance);
       }
 
       telemetry.update();
@@ -253,39 +251,44 @@ public class ColorSensorController extends LinearOpMode {
   }
 
   public ArtifactColor GetColor(Telemetry tel) {
-    if (_colorSensor instanceof DistanceSensor) {
-      double distance = ((DistanceSensor) _colorSensor).getDistance(DistanceUnit.CM);
-
-      tel.addData("Distance", distance);
-      if (distance > 2.0){
-        return ArtifactColor.UNKNOWN;
-      }
-    }
-
+//    if (_colorSensor instanceof DistanceSensor) {
+//      double distance = ((DistanceSensor) _colorSensor).getDistance(DistanceUnit.CM);
+//
+//      if (distance > MAX_DISTANCE_CM) {
+//        tel.addData("Status", "Ball too Far : " + String.format("%.1f", distance) + "cm");
+//        return ArtifactColor.UNKNOWN;
+//      }
+//
+//      tel.addData("Distance", distance);
+//      if (distance > 4.0) {
+//        return ArtifactColor.UNKNOWN;
+//      }
+//    }
+//
     NormalizedRGBA colors = _colorSensor.getNormalizedColors();
-
     float[] hsvValues = new float[3];
     Color.colorToHSV(colors.toColor(), hsvValues);
 
     float hue = hsvValues[0];
-    float saturation = hsvValues[1];
-    float value = hsvValues[2];
 
-    tel.addData("Color Value", colors.toString());
-    tel.addData("Hue", hue);
-    tel.addData("Saturation", saturation);
-    tel.addData("Value", value);
+    tel.addData("Output Hue", hue);
 
-    if (saturation < MIN_SATURATION || value < MIN_VALUE) {
-      return ArtifactColor.UNKNOWN;
-    }
-
-    if (hue > GREEN_HUE_MIN && hue < GREEN_HUE_MAX) {
+    if (hue >= GREEN_HUE_MIN && hue <= GREEN_HUE_MAX) {
       return ArtifactColor.GREEN;
-    }
-    if (hue >= PURPLE_HUE_MIN && hue <= PURPLE_HUE_MAX) {
+    } else if (hue >= PURPLE_HUE_MIN && hue <= PURPLE_HUE_MAX){
       return ArtifactColor.PURPLE;
     }
-    return ArtifactColor.UNKNOWN;
-  }
+
+   return ArtifactColor.UNKNOWN;
 }
+
+    private String getConfidenceLevel (float saturation, float value){
+      if (saturation > 0.5 && value > 0.4) {
+        return "High";
+      } else if (saturation > 0.35 && value > 0.25) {
+        return "Medium";
+      } else {
+        return "Low";
+      }
+    }
+  }
