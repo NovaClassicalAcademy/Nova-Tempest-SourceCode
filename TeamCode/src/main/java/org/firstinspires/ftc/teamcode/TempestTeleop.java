@@ -41,7 +41,6 @@ public class TempestTeleop extends OpMode {
     CRServo leftGreen;
     CRServo rightGreen;
 
-    CRServo EncoderRoulette;
 
 
 
@@ -85,7 +84,6 @@ public class TempestTeleop extends OpMode {
 
 
 
-        //EncoderRoulette = hardwareMap.get( CRServo.class, "RouletteEncoder");
 
         roulette.setPower(0);
 
@@ -136,6 +134,9 @@ public class TempestTeleop extends OpMode {
         double BL_power = (gamepad1.left_stick_y + gamepad1.left_stick_x) / 2;
         double FR_power = (gamepad1.left_stick_y + gamepad1.left_stick_x) / 2;
         double BR_power = (gamepad1.left_stick_y - gamepad1.left_stick_x) / 2;
+
+
+
 
         //turning motion
         FL_power -= gamepad1.right_stick_x / 2;
@@ -191,10 +192,10 @@ public class TempestTeleop extends OpMode {
         */
 
         //rotate roulette for now
-        if(gamepad2.left_bumper){
+        if(gamepad2.dpad_left){
             roulette.setPower(0.5);
         }
-        else if(gamepad2.right_bumper){
+        else if(gamepad2.dpad_right){
             roulette.setPower(-1);
         }
         else {
@@ -226,7 +227,10 @@ public class TempestTeleop extends OpMode {
 
 
 
-
+        telemetry.addData("FL power", FL_power);
+        telemetry.addData("FR power", FR_power);
+        telemetry.addData("BL power", BL_power);
+        telemetry.addData("BR power", BR_power);
         telemetry.update();
 
     }
@@ -257,3 +261,7 @@ public class TempestTeleop extends OpMode {
         }
 
 }
+
+
+
+
