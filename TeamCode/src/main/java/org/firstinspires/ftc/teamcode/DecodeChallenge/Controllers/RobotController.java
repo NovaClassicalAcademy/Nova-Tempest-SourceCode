@@ -18,9 +18,9 @@ public class RobotController {
     public NormalizedColorSensor ColorSensor;
     public WebcamName Webcam;
 
-    private HardwareMap _hardwareMap;
+    private final HardwareMap _hardwareMap;
 
-    public void init(HardwareMap hardwareMap) {
+    public RobotController(HardwareMap hardwareMap) {
         if (hardwareMap == null){
             throw new RuntimeException("Hardware Map cannot be null");
         }
