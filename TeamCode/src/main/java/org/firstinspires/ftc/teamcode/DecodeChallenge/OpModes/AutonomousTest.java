@@ -23,7 +23,7 @@ public class AutonomousTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        telemetry.addData("OpMode Test", "Autonomous PEDRO TEST");
+        telemetry.addData("OpMode", "Autonomous PEDRO TEST");
         telemetry.update();
 
         waitForStart();
