@@ -1,26 +1,26 @@
-package org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers;
+package org.firstinspires.ftc.teamcode.DecodeChallenge.Systems;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-public class RobotController {
+public class RobotMapping {
     public DcMotor FrontLeftDrive, FrontRightDrive, BackLeftDrive, BackRightDrive;
     public DcMotor YLeftEncoder, YRightEncoder, XEncoder;
     public CRServo LowerLeftIntake, LowerRightIntake, UpperLeftIntake, UpperRightIntake;
-    public DcMotor Goat;
+    public DcMotorEx Goat;
     public Servo Scooper;
     public NormalizedColorSensor ColorSensor;
     public WebcamName Webcam;
 
     private final HardwareMap _hardwareMap;
 
-    public RobotController(HardwareMap hardwareMap) {
+    public RobotMapping(HardwareMap hardwareMap) {
         if (hardwareMap == null){
             throw new RuntimeException("Hardware Map cannot be null");
         }
@@ -86,7 +86,7 @@ public class RobotController {
     }
 
     private void InitGoatMotor() {
-        Goat = _hardwareMap.get(DcMotor.class, "Goat");
+        Goat = _hardwareMap.get(DcMotorEx.class, "Goat");
         Goat.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Goat.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Goat.setDirection(DcMotor.Direction.REVERSE);

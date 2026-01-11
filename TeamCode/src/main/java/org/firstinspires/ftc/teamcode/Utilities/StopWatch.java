@@ -12,10 +12,6 @@ public class StopWatch {
         return System.currentTimeMillis() - _startTime;
     }
 
-    public long StopTimer() {
-        return GetElapseTime();
-    }
-
     public void ResetTimer() {
         _startTime = 0;
     }

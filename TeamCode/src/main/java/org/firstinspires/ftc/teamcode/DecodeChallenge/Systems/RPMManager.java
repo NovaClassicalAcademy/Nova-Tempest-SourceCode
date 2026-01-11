@@ -2,10 +2,7 @@ package org.firstinspires.ftc.teamcode.DecodeChallenge.Systems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.Utilities.VoltageMonitor;
 
 public class RPMManager {
     public enum RPMStatus {REACHED, RUNNING, TIMEOUT, LOW_BATTERY}
@@ -13,7 +10,7 @@ public class RPMManager {
     private final ElapsedTime _timer = new ElapsedTime();
     private final double _ticksPerRev;
 
-    public RPMManager(DcMotorEx motor, double ticksPerRev, VoltageMonitor voltMon) {
+    public RPMManager(DcMotorEx motor, double ticksPerRev) {
         _motor = motor;
         _ticksPerRev = ticksPerRev;
 
