@@ -17,6 +17,7 @@ import java.util.List;
 public class DecodeDriveSystemStateMachine {
 
     public enum DriveState { DecdingNextSpeciment, DriveToRow, WaitForLoadTrigger, LoadingSpecimens, LoadingComplete, DriveToLaunch, ReadyToFire, Idle }
+
     private final Telemetry _telemetry;
     private final Follower _follower;
     private final CameraController _camera;
@@ -38,7 +39,7 @@ public class DecodeDriveSystemStateMachine {
     private List<Integer> _completedSpecimens = new ArrayList<>();
     private int _targetSpecimenId;
     private int _startingSpecimen;
-    private DriveState _currentDriveState = DriveState.Idle;
+    private DriveState _currentDriveState;
     private boolean _loadTriggerPulled;
     private boolean _returnTriggerPulled;
 
@@ -58,25 +59,8 @@ public class DecodeDriveSystemStateMachine {
         if (startingSpecimen != -1){
             _startingSpecimen = startingSpecimen;
         }
-        else{
-            _startingSpecimen = AprilTagConstant.GPP;
-        }
 
-        // TODO: MAKE THE DEFAULT START POSITION IS EITHER RED OR BLUE SIDE---DONE?? isn't it already determined by color?
-        Pose startPosition = null;
-        switch (_allianceColor)
-        {
-            case Blue:
-                // TODO: WHAT IS THE BLUE SIDE START POINT? DONE
-                startPosition = new Pose(60.056, 9.019, Math.toRadians(90));
-                break;
-
-            case Red:
-                // TODO: WHAT IS THE RED SIDE START POINT? DONE
-                startPosition = new Pose(86.890, 8.609, Math.toRadians(90));
-                break;
-        }
-
+        Pose startPosition = new Pose(56.000, 8.000, Math.toRadians(90));
         Pose cameraPosition = _camera.GetRobotPose();
 
         if (cameraPosition != null) {
@@ -108,18 +92,10 @@ public class DecodeDriveSystemStateMachine {
         return _currentDriveState == DriveState.WaitForLoadTrigger;
     }
 
-    public boolean IsLoadComplete(){
+    public boolean LoadComplete(){
         return _currentDriveState == DriveState.LoadingComplete;
     }
 
-    public boolean IsReadyToFire(){
-        return _currentDriveState == DriveState.ReadyToFire;
-    }
-
-    // TODO: THIS WILL HAVE TO CHANGE BASED ON TEAM COLOR
-    // WE COULD ABSTRACT THIS BUILD PATHS INTO SEPARATE CLASSES
-    // SO WE CAN HAVE ONE FOR A BLUE AND RED AND PASS IN REFERENCE,
-    // OR DO A SWITCH CASE THAT HAS BOTH COLOR PATHS IN HERE
     private void BuildPaths(){
 
         _pathMoveToFirstRow = _follower.pathBuilder()
@@ -271,69 +247,32 @@ public class DecodeDriveSystemStateMachine {
 
     private void ChangeState(DriveState newState){
         _currentDriveState = newState;
-        // NOTE: If you need to do something when the state changes, do it here:
     }
 
-    private void SetRowDestination(int targetSpecimenId){
-        switch (targetSpecimenId){
-            case AprilTagConstant.GPP:
-                GoToFirstRow();
-                break;
-
-            case AprilTagConstant.PGP:
-                GoToSecondRow();
-                break;
-
-            case AprilTagConstant.PPG:
-                GoToThirdRow();
-                break;
-
-            default:
-                ChangeState(DriveState.Idle);
-        }
-    }
-
-    private void SetApproach(int targetSpecimenId){
-        switch (targetSpecimenId){
-
-            case AprilTagConstant.GPP:
-                ApproachFirstRowForLoading();
-                break;
-
-            case AprilTagConstant.PGP:
-                ApproachSecondRowForLoading();
-                break;
-
-            case AprilTagConstant.PPG:
-                ApproachThirdRowForLoading();
-                break;
-        }
-    }
-
-    private void SetReturnRoute(int targetSpecimenId){
-        switch (targetSpecimenId){
-
-            case AprilTagConstant.GPP:
-                ReturnFirstRowToLaunch();
-                break;
-
-            case AprilTagConstant.PGP:
-                ReturnSecondRowToLaunch();
-                break;
-
-            case AprilTagConstant.PPG:
-                ReturnThirdRowToLaunch();
-                break;
-        }
-    }
-
-    public DriveState GetState(){
+    public DriveState GetUpdate(){
 
         switch (_currentDriveState){
 
             case DecdingNextSpeciment:
                 _targetSpecimenId = IdentifyNextSpecimen();
-                SetRowDestination(_targetSpecimenId);
+                switch (_targetSpecimenId){
+
+                    case AprilTagConstant.GPP:
+                        GoToFirstRow();
+                        break;
+
+                    case AprilTagConstant.PGP:
+                        GoToSecondRow();
+                        break;
+
+                    case AprilTagConstant.PPG:
+                        GoToThirdRow();
+                        break;
+
+                    default:
+                        ChangeState(DriveState.Idle);
+                }
+
                 ChangeState(DriveState.DriveToRow);
                 break;
 
@@ -344,9 +283,22 @@ public class DecodeDriveSystemStateMachine {
                 break;
 
             case WaitForLoadTrigger:
-
                 if (_loadTriggerPulled){
-                    SetApproach(_targetSpecimenId);
+                    switch (_targetSpecimenId){
+
+                        case AprilTagConstant.GPP:
+                            ApproachFirstRowForLoading();
+                            break;
+
+                        case AprilTagConstant.PGP:
+                            ApproachSecondRowForLoading();
+                            break;
+
+                        case AprilTagConstant.PPG:
+                            ApproachThirdRowForLoading();
+                            break;
+                    }
+
                     ChangeState(DriveState.LoadingSpecimens);
                     _loadTriggerPulled = false;
                 }
@@ -359,9 +311,23 @@ public class DecodeDriveSystemStateMachine {
                 break;
 
             case LoadingComplete:
-
                 if (_returnTriggerPulled){
-                    SetReturnRoute(_targetSpecimenId);
+
+                    switch (_targetSpecimenId){
+
+                        case AprilTagConstant.GPP:
+                            ReturnFirstRowToLaunch();
+                            break;
+
+                        case AprilTagConstant.PGP:
+                            ReturnSecondRowToLaunch();
+                            break;
+
+                        case AprilTagConstant.PPG:
+                            ReturnThirdRowToLaunch();
+                            break;
+                    }
+
                     ChangeState(DriveState.DriveToLaunch);
                 }
 
@@ -371,7 +337,5 @@ public class DecodeDriveSystemStateMachine {
                 }
                 break;
         }
-
-        return _currentDriveState;
     }
 }
