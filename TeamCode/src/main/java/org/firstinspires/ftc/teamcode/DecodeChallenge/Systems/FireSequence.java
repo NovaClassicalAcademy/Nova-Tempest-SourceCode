@@ -27,7 +27,7 @@ public class FireSequence {
     public FireSequence(Telemetry telemetry, RobotMapping rc) {
         _telemetry = telemetry;
         _intake = new IntakeController(rc.UpperLeftIntake, rc.UpperRightIntake, rc.LowerLeftIntake, rc.LowerRightIntake);
-        _launcher = new LaunchController(telemetry, rc.Goat, 300);
+        _launcher = new LaunchController(telemetry, rc.Goat, 1500);
         _scooper = new ScooperController(rc.Scooper, 300);
         _distanceSensor = new DistanceSensorController(rc.ColorSensor);
 
@@ -54,14 +54,23 @@ public class FireSequence {
         switch (_currentState) {
 
             case SpinningUp:
-                if (_launcher.IsAtFullSpeed() && _stateTimer.milliseconds() > 500){
+//                BYPASS: Can't read motor velocity, no encoder cable connected to do so.
+//                boolean isAtSpeed = _launcher.IsAtFullSpeed();
+//                _telemetry.addData("Fire Mode", "Is at speed: " + isAtSpeed);
+//                if (isAtSpeed && _stateTimer.milliseconds() > 500){
+//                    _intake.Deactivate();
+//                    ChangeState(LaunchState.ReadyToFire);
+//                }
+
+                _telemetry.addData("Fire Mode", "Speed check bypass, no encoder cable");
+                if (_stateTimer.milliseconds() > 500){
                     _intake.Deactivate();
                     ChangeState(LaunchState.ReadyToFire);
                 }
                 break;
 
             case ReadyToFire:
-                if (_fireAway) {
+                if (_fireAway && _distanceSensor.GetDistanceInch() <= 3) {
                     _ballsFired++;
                     _fireAway = false;
 
