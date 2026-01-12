@@ -3,33 +3,31 @@ package org.firstinspires.ftc.teamcode.DecodeChallenge.OpModes;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.RobotMapping;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.PedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.DecodeChallenge.PedroPathing.DecodePathing;
+import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.DecodePathing;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.FireSequence;
-import org.firstinspires.ftc.teamcode.Utilities.StopWatch;
 
 @Autonomous(name="Autonomous Pedro Test", group="Test")
 public class AutonomousTest extends LinearOpMode {
-    private enum RobotState { Idle, Firing }
+    private enum RobotState { Preloaded, Firing, Move, Idle }
 
-    private final RobotMapping _robotMapping;
-    private final FireSequence _fireSequence;
-    private final Follower _follower;
-    private final DecodePathing _pathing;
-    private StopWatch _stopWatch;
-
-    public AutonomousTest() {
-        _robotMapping = new RobotMapping(hardwareMap);
-        _follower = Constants.createFollower(hardwareMap);
-        _pathing = new DecodePathing(_follower);
-
-        _fireSequence = new FireSequence(_robotMapping);
-    }
+    private RobotMapping _robotMapping;
+    private FireSequence _fireSequence;
+    private Follower _follower;
+    private DecodePathing _pathing;
+    private ElapsedTime _stateTimer = new ElapsedTime();
+    private RobotState _currentAutoState = RobotState.Preloaded;
 
     @Override
     public void runOpMode() {
+
+        _robotMapping = new RobotMapping(hardwareMap);
+        _follower = Constants.createFollower(hardwareMap);
+        _pathing = new DecodePathing(_follower);
+        _fireSequence = new FireSequence(telemetry, _robotMapping);
 
         telemetry.addData("OpMode", "Autonomous PEDRO TEST");
         telemetry.update();
@@ -37,68 +35,41 @@ public class AutonomousTest extends LinearOpMode {
         waitForStart();
 
         RobotState robotState = RobotState.Firing;
+        _fireSequence.InitFireMode();
 
         while (opModeIsActive()) {
 
-            // NOTE: firing loop.
-            if (robotState == RobotState.Firing) {
-                FireCannons(robotState);
-            }
+            _follower.update();
 
-            if (robotState == RobotState.Idle){
-                MoveToPosition(robotState);
-            }
-        }
-    }
+            FireSequence.LaunchState launchState = _fireSequence.GetStatus();
 
-    private void FireCannons(RobotState robotState){
+            switch (_currentAutoState){
+                case Preloaded:
+                    if (launchState == FireSequence.LaunchState.ReadyToFire){
+                        _fireSequence.Fire();
+                    }
 
-        _fireSequence.InitializeCountDown();
+                    if (launchState == FireSequence.LaunchState.Off){
+                        _currentAutoState = RobotState.Move;
+                    }
+                    break;
 
-        _stopWatch.StartTimer();
-        while (_stopWatch.GetElapseTime() < 1000) {
-            telemetry.addData("Launch Sequence", "Countdown Initiated");
-            telemetry.update();
-            _stopWatch.ResetTimer();
-        }
-
-        FireSequence.LaunchState launchState = _fireSequence.GetStatus();
-
-        while (opModeIsActive() && launchState != FireSequence.LaunchState.Off) {
-
-            telemetry.addData("OpMode", "Autonomous PEDRO TEST");
-
-            if (_fireSequence.IsLoaded()) {
-                telemetry.addData("Launch Sequence", "Countdown Initiated");
-                _fireSequence.FireAway();
-            }
-
-            telemetry.update();
-            launchState = _fireSequence.GetStatus();
-
-            if (launchState == FireSequence.LaunchState.Off) {
-                robotState = RobotState.Idle;
-            }
-        }
-    }
-
-    private void MoveToPosition(RobotState robotState){
-
-        while(opModeIsActive()){
-
-            telemetry.addData("OpMode", "Autonomous PEDRO TEST");
-
-            // TODO: Perform the movements.
-
-            DecodePathing.PathState pathState = _pathing.Get
-
-            switch (robotState){
+                case Move:
+                    if (!_follower.isBusy()){
+                        _currentAutoState = RobotState.Idle;
+                    }
+                    break;
 
                 case Idle:
-                    // Todo: move to next position
+                    // Do nothing
                     break;
             }
 
+            telemetry.addData("Auto State", _currentAutoState);
+            telemetry.addData("Fire State", launchState);
+            telemetry.addData("Pos X", _follower.getPose().getX());
+            telemetry.addData("Pos Y", _follower.getPose().getY());
+            telemetry.update();
         }
     }
 }

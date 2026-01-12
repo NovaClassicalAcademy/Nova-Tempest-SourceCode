@@ -1,16 +1,22 @@
 package org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers;
 
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
-import kotlin.NotImplementedError;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class ColorSensorController {
-    private final NormalizedColorSensor _colorSensor;
 
-    public ColorSensorController(NormalizedColorSensor colorSensor){
-        _colorSensor = colorSensor;
+    private DistanceSensor _distanceSensor;
+    private final double _maxDistanceFromCam = 2.5; // In centimeters
+
+    public ColorSensorController(DistanceSensor colorSensor){
+        _distanceSensor = colorSensor;
     }
-    public boolean IsBallIdentified(){
-        throw new NotImplementedError("TODO: need to implement method that checks if ball is there, via color sensor");
+
+
+    public boolean IsBallIdentified() {
+
+        return false;
     }
 }

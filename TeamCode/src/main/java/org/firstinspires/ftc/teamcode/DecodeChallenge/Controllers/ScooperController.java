@@ -1,47 +1,32 @@
 package org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers;
 
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.Utilities.TimedAction;
 
 public class ScooperController {
-    private final Servo _servo;
-    private double _upPosition = 0.25;
-    private double _downPosition = 0.0;
-    private double _tolerance = 0.005;
 
+    private final SmartServoController _servo;
+    private final double _actuationTime;
 
-    public ScooperController(Servo servo) {
-        _servo = servo;
+    private static final double _upPosition = 0.25;
+    private static final double _downPosition = 0.0;
+
+    public ScooperController(Servo servo, double avgActuationTime) {
+        _servo = new SmartServoController(servo);
+        _actuationTime = avgActuationTime;
     }
 
-    public void ScoopUp() {
-        _servo.setPosition(_upPosition);
+    public void ScoopUp(){
+        _servo.MoveTo(_upPosition, _actuationTime);
     }
 
-    public void ScoopDown() {
-        _servo.setPosition(_downPosition);
+    public void ScoopDown(){
+        _servo.MoveTo(_downPosition, _actuationTime);
     }
 
-    public void SetPosition(double position) {
-        _servo.setPosition(position);
-    }
-
-    public double GetPosition() {
-        return _servo.getPosition();
-    }
-
-    public void SetUpPosition(double position) {
-        _upPosition = position;
-    }
-
-    public void SetDownPosition(double position) {
-        _downPosition = position;
-    }
-
-    public boolean IsUp(){
-        return _upPosition - GetPosition() <= _tolerance;
-    }
-
-    public boolean IsDown(){
-        return  _downPosition - GetPosition() <= _tolerance;
+    public boolean IsBusy(){
+        return !_servo.IsFinished();
     }
 }

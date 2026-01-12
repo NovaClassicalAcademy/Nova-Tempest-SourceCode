@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.DecodeChallenge.Systems;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -81,7 +82,7 @@ public class RobotMapping {
 
         LowerLeftIntake.setDirection(CRServo.Direction.FORWARD);
         LowerRightIntake.setDirection(CRServo.Direction.REVERSE);
-        UpperLeftIntake.setDirection(CRServo.Direction.FORWARD);
+        UpperLeftIntake.setDirection(CRServo.Direction.REVERSE);
         UpperRightIntake.setDirection(CRServo.Direction.REVERSE);
     }
 
@@ -93,7 +94,7 @@ public class RobotMapping {
     }
 
     private void InitScooper() {
-        Scooper = _hardwareMap.get(Servo.class, "Scooper");
+        Scooper = _hardwareMap.get(Servo.class, "scooper");
     }
 
     private void InitColorSensor() {

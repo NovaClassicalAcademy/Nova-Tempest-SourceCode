@@ -4,6 +4,9 @@ public class StopWatch {
 
     private long _startTime;
 
+    public boolean IsStarted(){
+        return  _startTime >= 0;
+    }
     public void StartTimer() {
         _startTime = System.currentTimeMillis();
     }
@@ -13,6 +16,6 @@ public class StopWatch {
     }
 
     public void ResetTimer() {
-        _startTime = 0;
+        _startTime = -1;
     }
 }

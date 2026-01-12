@@ -1,91 +1,114 @@
 package org.firstinspires.ftc.teamcode.DecodeChallenge.Systems;
 
-import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.ColorSensorController;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.DistanceSensorController;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.IntakeController;
-import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.CannonController;
+import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.LaunchController;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.ScooperController;
 
 public class FireSequence {
 
-    public enum LaunchState { Off, SpinningUp, ScooperUp, Loading, BallSense, ReadyToLaunch, FireAway }
+    public enum LaunchState { Off, SpinningUp, ReadyToFire, ScoopUp, ScoopDown, Loading, BallSense }
 
-    private CannonController _launcher;
-    private ScooperController _scooper;
-    private IntakeController _intake;
-    private ColorSensorController _colorSensor;
-    private double _targetRPM = 200.00; // TODO: find max and min rpm
-    private double _maxRPM = _targetRPM + 200;
+    private final Telemetry _telemetry;
+    private final LaunchController _launcher;
+    private final ScooperController _scooper;
+    private final IntakeController _intake;
+    private final DistanceSensorController _distanceSensor;
+
+
     private LaunchState _currentState;
+    private final ElapsedTime _stateTimer = new ElapsedTime();
     private int _ballsFired;
+    private boolean _fireAway;
 
-    public FireSequence(RobotMapping rc) {
+    public FireSequence(Telemetry telemetry, RobotMapping rc) {
+        _telemetry = telemetry;
         _intake = new IntakeController(rc.UpperLeftIntake, rc.UpperRightIntake, rc.LowerLeftIntake, rc.LowerRightIntake);
-        _launcher = new CannonController(rc.Goat);
-        _scooper = new ScooperController(rc.Scooper);
-        _colorSensor = new ColorSensorController(rc.ColorSensor);
+        _launcher = new LaunchController(telemetry, rc.Goat, 300);
+        _scooper = new ScooperController(rc.Scooper, 300);
+        _distanceSensor = new DistanceSensorController(rc.ColorSensor);
+
+        _fireAway = false;
     }
 
-    public void InitializeCountDown(){
-        _launcher.SpinUp();
-        _currentState = LaunchState.SpinningUp;
-        _ballsFired = 3;
-
-        _launcher.SetRPM(_targetRPM, _maxRPM);
+    public void InitFireMode(){
+        _launcher.Start();
+        _ballsFired = 0;
+        ChangeState(LaunchState.SpinningUp);
     }
 
-    public void FireAway(){
-        _currentState = LaunchState.FireAway;
+    public void Fire(){
+        _fireAway = true;
     }
-    public void LoadCannon(){
-        _currentState = LaunchState.Loading;
+
+    public void Reload(){
         _intake.Activate();
-    }
-
-    public boolean IsLoaded(){
-        return _currentState == LaunchState.ReadyToLaunch;
+        ChangeState(LaunchState.Loading);
     }
 
     public LaunchState GetStatus() {
 
-        if (_ballsFired == 3) {
-            _currentState = LaunchState.Off;
-        }
-
         switch (_currentState) {
 
             case SpinningUp:
-                if (_launcher.IsReadyForLaunch()) {
-                    _currentState = LaunchState.ReadyToLaunch;
+                if (_launcher.IsAtFullSpeed() && _stateTimer.milliseconds() > 500){
+                    _intake.Deactivate();
+                    ChangeState(LaunchState.ReadyToFire);
                 }
                 break;
 
-            case FireAway:
-                _scooper.ScoopUp();
-                _currentState = LaunchState.ScooperUp;
-                _ballsFired++;
+            case ReadyToFire:
+                if (_fireAway) {
+                    _ballsFired++;
+                    _fireAway = false;
+
+                    _telemetry.addData("Fire Mode", "Dispatching ball #" + _ballsFired);
+                    _scooper.ScoopUp();
+                    ChangeState(LaunchState.ScoopUp);
+                }
                 break;
 
-            case ScooperUp:
-                if (_scooper.IsUp()) {
-                    _intake.Activate();
+            case ScoopUp:
+                if (!_scooper.IsBusy()) {
                     _scooper.ScoopDown();
-                    _currentState = LaunchState.BallSense;
+                    ChangeState(LaunchState.ScoopDown);
+                }
+                break;
+
+            case ScoopDown:
+                if (!_scooper.IsBusy()) {
+                    _intake.Activate();
+                    ChangeState(LaunchState.BallSense);
                 }
                 break;
 
             case BallSense:
-                if (_colorSensor.IsBallIdentified() && _scooper.IsDown()) {
-                    _currentState = LaunchState.ReadyToLaunch;
+                if (_ballsFired >= 3) {
+                    _launcher.Stop();
+                    _intake.Deactivate();
+                    ChangeState(LaunchState.Off);
+                }
+                else if (_stateTimer.milliseconds() > 100 && _distanceSensor.GetDistanceInch() <= 3) {
+                    ChangeState(LaunchState.ReadyToFire);
                 }
                 break;
+
+            case Loading:
+                // TODO: May need to adjust timer to allow more/less time to load balls.
+                if (_stateTimer.milliseconds() > 3000 && _distanceSensor.GetDistanceInch() <= 3){
+                    _intake.Deactivate();
+                    ChangeState(LaunchState.ReadyToFire);
+                }
         }
 
         return _currentState;
     }
 
-    public boolean IsLaunchComplete(){
-        return _currentState == LaunchState.ReadyToLaunch;
+    private void ChangeState(LaunchState newState){
+        _currentState = newState;
+        _stateTimer.reset();
     }
-
-
 }

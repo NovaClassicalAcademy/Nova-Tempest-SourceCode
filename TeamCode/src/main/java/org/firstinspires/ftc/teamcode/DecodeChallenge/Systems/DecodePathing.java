@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.DecodeChallenge.PedroPathing;
+package org.firstinspires.ftc.teamcode.DecodeChallenge.Systems;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -65,6 +65,11 @@ public class DecodePathing {
                 break;
 
             case AtLine1:
+                _currentState = PathState.Travelling;
+                break;
+
+            case AtLine2:
+                _currentState = PathState.Travelling;
 
         }
 

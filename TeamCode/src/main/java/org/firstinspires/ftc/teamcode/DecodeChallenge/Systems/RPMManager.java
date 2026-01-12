@@ -4,20 +4,25 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class RPMManager {
     public enum RPMStatus {REACHED, RUNNING, TIMEOUT, LOW_BATTERY}
+
+    private final Telemetry _telemetry;
     private final DcMotorEx _motor;
     private final ElapsedTime _timer = new ElapsedTime();
     private final double _ticksPerRev;
 
-    public RPMManager(DcMotorEx motor, double ticksPerRev) {
+    public RPMManager(DcMotorEx motor, double ticksPerRev, Telemetry telemetry) {
         _motor = motor;
         _ticksPerRev = ticksPerRev;
+        _telemetry = telemetry;
 
         _motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public RPMStatus Update(double targetRPM, double tolerance, double timeOutSeconds) {
+    public RPMStatus Update(double targetRPM, double tolerance) {
 
         double targetTPS = (targetRPM/60.0) * _ticksPerRev;
         _motor.setVelocity(targetTPS);
@@ -29,11 +34,12 @@ public class RPMManager {
             return RPMStatus.REACHED;
         }
 
-        if (_timer.seconds() > timeOutSeconds) {
-            _timer.reset();
-            return RPMStatus.TIMEOUT;
-        }
+//        if (_timer.seconds() > timeOutSeconds) {
+//            _timer.reset();
+//            return RPMStatus.TIMEOUT;
+//        }
 
+        _telemetry.addData("Shooter RPM: ", currentRPM);
         return RPMStatus.RUNNING;
     }
 }

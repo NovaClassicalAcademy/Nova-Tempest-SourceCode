@@ -8,7 +8,7 @@ public class IntakeController {
     private final CRServo _lowerLeft;
     private final CRServo _lowerRight;
     private double _maxPower = 1.0;
-    private double _minPower = 0;
+    private double _minPower = 0.0;
 
     public IntakeController(CRServo upperLeft, CRServo upperRight, CRServo lowerLeft, CRServo lowerRight) {
         _upperLeft = upperLeft;
