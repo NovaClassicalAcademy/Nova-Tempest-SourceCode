@@ -85,6 +85,7 @@ public class CameraController {
             }
 
             if (detection.id != desiredGoalId)
+            { continue; }
 
             _telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f (inch)",
                     detection.robotPose.getPosition().x,
