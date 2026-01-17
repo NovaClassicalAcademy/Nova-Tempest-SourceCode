@@ -88,6 +88,8 @@ public class ConceptVisionColorSensor extends LinearOpMode
          *     This will force any other colored region into one of these colors.
          *     eg: Green may be reported as YELLOW, as this may be the "closest" match.
          */
+
+        /// TODO: REDEFINE THE COLOR SWATCH, YOU DON'T ALL OF THE COLORS. NOTE: THERE'S ONLY TWO YOU WOULD NEED.
         PredominantColorProcessor colorSensor = new PredominantColorProcessor.Builder()
                 .setRoi(ImageRegion.asUnityCenterCoordinates(-0.1, 0.1, 0.1, -0.1))
                 .setSwatches(

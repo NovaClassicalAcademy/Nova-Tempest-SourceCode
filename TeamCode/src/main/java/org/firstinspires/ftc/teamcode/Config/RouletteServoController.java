@@ -27,12 +27,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+/// TODO: REFACTOR TO FOCUS ON THE JOB OF THE CENTER BALL ROULETTE SERVO
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+package org.firstinspires.ftc.teamcode.Config;
+
+import android.graphics.Color;
+import android.telephony.mbms.MbmsErrors;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.WebcamConfiguration;
+
+import java.util.Hashtable;
 
 /*
  * This OpMode scans a single servo back and forward until Stop is pressed.
@@ -49,31 +57,70 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 @TeleOp(name = "Concept: Scan Servo", group = "Concept")
-public class ConceptScanServo extends LinearOpMode {
+public class RouletteServoController extends LinearOpMode {
+
+    ///TODO: TEST AND ADJUST VALUES.
 
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
-    static final int    CYCLE_MS    =   50;     // period of each cycle
+    static final int    CYCLE_MS    =   50;     // period of each cycle. check cycle every 50ms
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
 
     // Define class members
-    Servo   servo;
     double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
     boolean rampUp = true;
+    private Servo _servo;
+    private ColorSensorController _colorSensor;
+    private double[] _intakePosition;
+    private final double _position1 = 0.0;
+    private final double _position2 = 0.1;
+    private final double _position3 = 0.3;
+    private final double get_position3 = 0.2; ///TODO: these values need to be adjusted once we find the values. what is this?
 
+    private ArtifactColor[] _colorPosition;
+
+    public RouletteServoController(Servo servo, ColorSensorController colorSensor){
+        _servo = servo;
+        _colorSensor = colorSensor;
+        _colorPosition = new ArtifactColor[3];
+
+        _intakePosition = new double[3];
+        _intakePosition[0] = _position1;
+        _intakePosition[1] = _position2;
+        _intakePosition[2] = _position3;
+    }
+
+    public void InitializeRoulette(){
+        int position = 0;
+
+        while (position < 3){
+            MoveToPosition(position);
+            ArtifactColor color = _colorSensor.GetColor(telemetry);
+            SetColorPosition(position, color);
+            position++;
+        }
+    }
+    private void SetColorPosition(int position, ArtifactColor color){
+        if (position > 2 || position < 0){
+            throw new IndexOutOfBoundsException("Value should be between 1 and 3");
+        }
+        _colorPosition[position] = color;
+    }
+    public void MoveToPosition(int position){
+        if (position > 2 || position < 0){
+            throw new IndexOutOfBoundsException("Value should be between 1 and 3");
+        }
+        double servoPosition = _intakePosition[position];
+        _servo.setPosition(servoPosition);
+    }
 
     @Override
     public void runOpMode() {
-
-        // Connect to servo (Assume Robot Left Hand)
-        // Change the text in quotes to match any servo name on your robot.
-        servo = hardwareMap.get(Servo.class, "left_hand");
 
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
         telemetry.update();
         waitForStart();
-
 
         // Scan servo till stop pressed.
         while(opModeIsActive()){
@@ -102,7 +149,7 @@ public class ConceptScanServo extends LinearOpMode {
             telemetry.update();
 
             // Set the servo to the new position and pause;
-            servo.setPosition(position);
+            _servo.setPosition(position);
             sleep(CYCLE_MS);
             idle();
         }
