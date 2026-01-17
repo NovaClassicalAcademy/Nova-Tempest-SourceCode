@@ -19,6 +19,7 @@ public class FireSequence {
     private final DistanceSensorController _distanceSensor;
 
 
+    private static final double _launcherTargetVelocity = 2600; // NOTE: Observed max speed: 2600
     private LaunchState _currentState;
     private final ElapsedTime _stateTimer = new ElapsedTime();
     private int _ballsFired;
@@ -27,15 +28,15 @@ public class FireSequence {
     public FireSequence(Telemetry telemetry, RobotMapping rc) {
         _telemetry = telemetry;
         _intake = new IntakeController(rc.UpperLeftIntake, rc.UpperRightIntake, rc.LowerLeftIntake, rc.LowerRightIntake);
-        _launcher = new LaunchController(telemetry, rc.Goat, 1500);
-        _scooper = new ScooperController(rc.Scooper, 300);
+        _launcher = new LaunchController(rc.Goat, _launcherTargetVelocity);
+        _scooper = new ScooperController(rc.Scooper);
         _distanceSensor = new DistanceSensorController(rc.ColorSensor);
 
         _fireAway = false;
     }
 
     public void InitFireMode(){
-        _launcher.Start();
+        _launcher.StartVelocity();
         _ballsFired = 0;
         ChangeState(LaunchState.SpinningUp);
     }
@@ -51,44 +52,38 @@ public class FireSequence {
 
     public LaunchState GetStatus() {
 
+        _launcher.ReportVelocity(_telemetry);
+
         switch (_currentState) {
 
             case SpinningUp:
-//                BYPASS: Can't read motor velocity, no encoder cable connected to do so.
-//                boolean isAtSpeed = _launcher.IsAtFullSpeed();
-//                _telemetry.addData("Fire Mode", "Is at speed: " + isAtSpeed);
-//                if (isAtSpeed && _stateTimer.milliseconds() > 500){
-//                    _intake.Deactivate();
-//                    ChangeState(LaunchState.ReadyToFire);
-//                }
-
-                _telemetry.addData("Fire Mode", "Speed check bypass, no encoder cable");
-                if (_stateTimer.milliseconds() > 500){
+                // BYPASS: Can't read motor velocity, no encoder cable connected to do so.
+                if (_launcher.IsAtFullSpeed() || _stateTimer.milliseconds() > 1000){
                     _intake.Deactivate();
                     ChangeState(LaunchState.ReadyToFire);
                 }
                 break;
 
             case ReadyToFire:
-                if (_fireAway && _distanceSensor.GetDistanceInch() <= 3 && _stateTimer.milliseconds() > 1000) {
+                if ((_fireAway && _distanceSensor.GetDistanceInch() <= 3) || _stateTimer.milliseconds() > 2000) {
                     _ballsFired++;
                     _fireAway = false;
 
                     _telemetry.addData("Fire Mode", "Dispatching ball #" + _ballsFired);
-                    _scooper.ScoopUp();
+                    _scooper.ScoopUp(300);
                     ChangeState(LaunchState.ScoopUp);
                 }
                 break;
 
             case ScoopUp:
-                if (!_scooper.IsBusy()) {
-                    _scooper.ScoopDown();
+                if (_scooper.IsActuationComplete() || _stateTimer.milliseconds() > 2000) {
+                    _scooper.ScoopDown(800);
                     ChangeState(LaunchState.ScoopDown);
                 }
                 break;
 
             case ScoopDown:
-                if (!_scooper.IsBusy() && _stateTimer.milliseconds() > 500) {
+                if (_scooper.IsActuationComplete() || _stateTimer.milliseconds() > 2000) {
                     _intake.Activate();
                     ChangeState(LaunchState.BallSense);
                 }
@@ -100,7 +95,8 @@ public class FireSequence {
                     _intake.Deactivate();
                     ChangeState(LaunchState.Off);
                 }
-                else if (_stateTimer.milliseconds() > 100 && _distanceSensor.GetDistanceInch() <= 3) {
+                else if (_distanceSensor.GetDistanceInch() <= 3 || _stateTimer.milliseconds() > 2000) {
+                    _intake.Deactivate();
                     ChangeState(LaunchState.ReadyToFire);
                 }
                 break;

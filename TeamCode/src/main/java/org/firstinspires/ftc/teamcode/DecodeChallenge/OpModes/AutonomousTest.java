@@ -33,16 +33,18 @@ public class AutonomousTest extends LinearOpMode {
 
         waitForStart();
 
+        // NOTE: initialize launch variable and spin up the launcher.
+        FireSequence.LaunchState launchState = FireSequence.LaunchState.Off;
         _fireSequence.InitFireMode();
 
         while (opModeIsActive()) {
 
             _follower.update();
 
-            FireSequence.LaunchState launchState = _fireSequence.GetStatus();
-
             switch (_currentAutoState){
                 case Preloaded:
+                    launchState = _fireSequence.GetStatus();
+
                     if (launchState == FireSequence.LaunchState.ReadyToFire){
                         _fireSequence.Fire();
                     }
