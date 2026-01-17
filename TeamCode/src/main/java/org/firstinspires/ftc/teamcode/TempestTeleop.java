@@ -212,13 +212,13 @@ public class TempestTeleop extends OpMode {
 
         //lever
         if(gamepad2.right_bumper){
-            lever.setPosition(0.25);
+
         }
         else{
             lever.setPosition(0);
         }
 
-        if(gamepad2.dpad_right){
+        if(gamepad2.right_bumper){
             timer.reset();
         }
 
@@ -226,12 +226,7 @@ public class TempestTeleop extends OpMode {
         //Shoot
         if(gamepad2.right_trigger > 0.2){
             outtake.setPower(-10);
-            if(timer.seconds() > 3){
-                leftBlack.setPower(5);
-                rightBlack.setPower(-5);
-                leftGreen.setPower(-5);
-                rightGreen.setPower(-5);
-            }
+
         }
         else if(gamepad2.left_trigger > 0.2){
             outtake.setPower(-0.9);
