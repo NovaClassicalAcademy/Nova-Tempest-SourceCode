@@ -1,74 +1,61 @@
 package org.firstinspires.ftc.teamcode.DecodeChallenge.OpModes;
 
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.AprilTagDetectionController;
-import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.BasicDriveController;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.RobotMapping;
+import org.firstinspires.ftc.teamcode.DecodeChallenge.PedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.DecodePathing;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.FireSequence;
 
-import java.util.List;
-
-@Autonomous(name="Autonomous Comp Test", group="Test")
+@Autonomous(name="Autonomous Pedro Test", group="Test")
 public class AutonomousTest extends LinearOpMode {
-    enum RobotState { Start, Preloaded, MoveOffWall, MoveOffLaunch, Idle }
+    private enum RobotState { Preloaded, Firing, Move, Idle }
 
     private RobotMapping _robotMapping;
     private FireSequence _fireSequence;
-    private AprilTagDetectionController _aprilTagDetection;
-    private RobotState _currentAutoState = RobotState.Start;
-    private BasicDriveController _driveController;
+    private Follower _follower;
+    private DecodePathing _pathing;
+    private RobotState _currentAutoState = RobotState.Preloaded;
 
     @Override
     public void runOpMode() {
 
         _robotMapping = new RobotMapping(hardwareMap);
+        _follower = Constants.createFollower(hardwareMap);
+        _pathing = new DecodePathing(_follower);
         _fireSequence = new FireSequence(telemetry, _robotMapping);
-        _driveController = new BasicDriveController(_robotMapping);
-        _aprilTagDetection = new AprilTagDetectionController(_robotMapping, telemetry);
 
-        telemetry.addData("OpMode", "Autonomous Comp Test 11");
-        telemetry.addData("Robot State: ", _currentAutoState);
+        telemetry.addData("OpMode", "Autonomous PEDRO TEST");
         telemetry.update();
 
         waitForStart();
 
         // NOTE: initialize launch variable and spin up the launcher.
-        FireSequence.LaunchState launchState;
+        FireSequence.LaunchState launchState = FireSequence.LaunchState.Off;
+        _fireSequence.InitFireMode();
 
         while (opModeIsActive()) {
+
+            _follower.update();
+
             switch (_currentAutoState){
-
-                case Start:
-                    _driveController.SetTarget(130);
-                    _currentAutoState = RobotState.MoveOffWall;
-                    break;
-
-                case MoveOffWall:
-                    if (_driveController.IsDoneMoving()){
-                        _fireSequence.InitFireMode();
-                        _currentAutoState = RobotState.Preloaded;
-                    }
-                    break;
-
                 case Preloaded:
+                    launchState = _fireSequence.GetStatus();
 
-                    _fireSequence.GetStatus();
-
-                    if (_fireSequence.IsReadyToFire()){
-
+                    if (launchState == FireSequence.LaunchState.ReadyToFire){
                         _fireSequence.Fire();
                     }
 
-                    if (_fireSequence.IsFireComplete()){
-                        _driveController.SetTarget(125);
-                        _currentAutoState = RobotState.MoveOffLaunch;
+                    if (launchState == FireSequence.LaunchState.Off){
+                        _currentAutoState = RobotState.Move;
                     }
                     break;
 
-                case MoveOffLaunch:
-                    if (_driveController.IsDoneMoving()){
+                case Move:
+                    if (!_follower.isBusy()){
                         _currentAutoState = RobotState.Idle;
                     }
                     break;
@@ -78,10 +65,11 @@ public class AutonomousTest extends LinearOpMode {
                     break;
             }
 
-            telemetry.addData("Auto State: ", _currentAutoState);
-            _driveController.DebugOutput(telemetry);
+            telemetry.addData("Auto State", _currentAutoState);
+            telemetry.addData("Fire State", launchState);
+            telemetry.addData("Pos X", _follower.getPose().getX());
+            telemetry.addData("Pos Y", _follower.getPose().getY());
             telemetry.update();
-            sleep(1000);
         }
     }
 }
