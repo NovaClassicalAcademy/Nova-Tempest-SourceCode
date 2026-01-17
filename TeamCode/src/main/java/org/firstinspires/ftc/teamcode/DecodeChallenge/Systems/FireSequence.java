@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.ScooperControl
 public class FireSequence {
 
     public enum LaunchState { Off, SpinningUp, ReadyToFire, ScoopUp, ScoopDown, Loading, BallSense }
-
+    public  int _maxBalls = 3;
     private final Telemetry _telemetry;
     private final LaunchController _launcher;
     private final ScooperController _scooper;
@@ -70,7 +70,7 @@ public class FireSequence {
                 break;
 
             case ReadyToFire:
-                if (_fireAway && _distanceSensor.GetDistanceInch() <= 3) {
+                if (_fireAway && _distanceSensor.GetDistanceInch() <= 3 && _stateTimer.milliseconds() > 1000) {
                     _ballsFired++;
                     _fireAway = false;
 
@@ -88,14 +88,14 @@ public class FireSequence {
                 break;
 
             case ScoopDown:
-                if (!_scooper.IsBusy()) {
+                if (!_scooper.IsBusy() && _stateTimer.milliseconds() > 500) {
                     _intake.Activate();
                     ChangeState(LaunchState.BallSense);
                 }
                 break;
 
             case BallSense:
-                if (_ballsFired >= 3) {
+                if (_ballsFired >= _maxBalls) {
                     _launcher.Stop();
                     _intake.Deactivate();
                     ChangeState(LaunchState.Off);
@@ -106,8 +106,8 @@ public class FireSequence {
                 break;
 
             case Loading:
-                // TODO: May need to adjust timer to allow more/less time to load balls.
-                if (_stateTimer.milliseconds() > 3000 && _distanceSensor.GetDistanceInch() <= 3){
+                // TODO: May need to adjust timer to allow more/less time to load balls. og = 3000
+                if (_stateTimer.milliseconds() > 2000 && _distanceSensor.GetDistanceInch() <= 3){
                     _intake.Deactivate();
                     ChangeState(LaunchState.ReadyToFire);
                 }

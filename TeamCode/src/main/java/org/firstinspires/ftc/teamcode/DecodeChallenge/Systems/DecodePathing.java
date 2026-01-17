@@ -70,6 +70,7 @@ public class DecodePathing {
 
             case AtLine2:
                 _currentState = PathState.Travelling;
+                break;
 
         }
 
