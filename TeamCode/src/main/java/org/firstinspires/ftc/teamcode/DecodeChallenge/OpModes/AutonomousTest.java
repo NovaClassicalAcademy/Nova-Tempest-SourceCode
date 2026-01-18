@@ -39,7 +39,7 @@ public class AutonomousTest extends LinearOpMode {
             switch (_currentAutoState){
 
                 case Start:
-                    _driveController.SetTarget(175);
+                    _driveController.SetTarget(130);
                     _currentAutoState = RobotState.MoveOffWall;
                     break;
 
