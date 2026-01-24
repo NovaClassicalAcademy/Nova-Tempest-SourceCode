@@ -212,7 +212,7 @@ public class TempestTeleop extends OpMode {
 
         //lever
         if(gamepad2.right_bumper){
-            lever.setPosition(0.25);
+
         }
         else{
             lever.setPosition(0);
