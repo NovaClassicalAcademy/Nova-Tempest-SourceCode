@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers;
 import android.util.Size;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.robot.Robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -19,13 +20,15 @@ import java.util.List;
 
 public class AprilTagWebcam {
     private AprilTagProcessor _aprilTagProcessor;
+    private WebcamName _webCam;
     private VisionPortal _visionPortal;
     private List<AprilTagDetection> _detectionTags = new ArrayList<>();
 
     private Telemetry _telemetry;
 
-    public void Init(HardwareMap hardwareMap, Telemetry telemetry){
+    public void AprilTagWebcam(WebcamName webCam, Telemetry telemetry){
         _telemetry = telemetry;
+        _webCam = webCam;
 
         _aprilTagProcessor = new AprilTagProcessor.Builder()
                 .setDrawTagID(true)
@@ -36,7 +39,6 @@ public class AprilTagWebcam {
                 .build();
 
         VisionPortal.Builder _builder = new VisionPortal.Builder();
-        _builder.setCamera(hardwareMap.get(WebcamName.class, "WebCam"));
         _builder.setCameraResolution(new Size(640, 480));
         _builder.addProcessor(_aprilTagProcessor);
 

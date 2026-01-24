@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptAprilTag;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.BasicDriveController;
-import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.ConceptAprilTagReference;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.RobotMapping;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.PedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.FireSequence;
@@ -19,7 +18,6 @@ public class AutonomousTest extends LinearOpMode {
     private FireSequence _fireSequence;
     private RobotState _currentAutoState = RobotState.Start;
     private BasicDriveController _driveController;
-    private ConceptAprilTag _conceptAprilTag;
 
     @Override
     public void runOpMode() {
