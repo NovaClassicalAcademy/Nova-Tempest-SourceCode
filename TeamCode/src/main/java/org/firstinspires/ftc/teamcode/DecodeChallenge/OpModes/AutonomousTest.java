@@ -1,21 +1,22 @@
 package org.firstinspires.ftc.teamcode.DecodeChallenge.OpModes;
 
-import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.ConceptAprilTag;
+import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.AprilTagDetectionController;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.BasicDriveController;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.RobotMapping;
-import org.firstinspires.ftc.teamcode.DecodeChallenge.PedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.FireSequence;
+
+import java.util.List;
 
 @Autonomous(name="Autonomous Comp Test", group="Test")
 public class AutonomousTest extends LinearOpMode {
-    private enum RobotState { Start, Preloaded, MoveOffWall, MoveOffLaunch, Idle }
+    enum RobotState { Start, Preloaded, MoveOffWall, MoveOffLaunch, Idle }
 
     private RobotMapping _robotMapping;
     private FireSequence _fireSequence;
+    private AprilTagDetectionController _aprilTagDetection;
     private RobotState _currentAutoState = RobotState.Start;
     private BasicDriveController _driveController;
 
@@ -25,6 +26,7 @@ public class AutonomousTest extends LinearOpMode {
         _robotMapping = new RobotMapping(hardwareMap);
         _fireSequence = new FireSequence(telemetry, _robotMapping);
         _driveController = new BasicDriveController(_robotMapping);
+        _aprilTagDetection = new AprilTagDetectionController(_robotMapping, telemetry);
 
         telemetry.addData("OpMode", "Autonomous Comp Test 11");
         telemetry.addData("Robot State: ", _currentAutoState);
@@ -36,7 +38,6 @@ public class AutonomousTest extends LinearOpMode {
         FireSequence.LaunchState launchState;
 
         while (opModeIsActive()) {
-
             switch (_currentAutoState){
 
                 case Start:
