@@ -42,4 +42,8 @@ public class LaunchController {
         telemetry.addData("Goat Speed", _motor.getVelocity());
         telemetry.addData("Goat Power", _motor.getPower());
     }
+
+    public void updateTargetVelocity(double newVelocity){
+        _targetVelocity = newVelocity;
+    }
 }

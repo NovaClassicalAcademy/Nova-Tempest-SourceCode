@@ -89,7 +89,7 @@ public class RobotMapping {
     private void InitGoatMotor() {
         Goat = _hardwareMap.get(DcMotorEx.class, "Goat");
         Goat.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Goat.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Goat.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Goat.setDirection(DcMotor.Direction.REVERSE);
     }
 
