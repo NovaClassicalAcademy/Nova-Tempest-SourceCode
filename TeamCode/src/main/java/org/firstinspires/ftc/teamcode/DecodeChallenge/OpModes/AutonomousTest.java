@@ -92,6 +92,7 @@ public class AutonomousTest extends LinearOpMode {
 
                 case ReadyToFire:
                     if (_runLoops >= 3){
+                        _runLoops++;
                         ChangeState(RobotState.OperationComplete);
                         break;
                     }
