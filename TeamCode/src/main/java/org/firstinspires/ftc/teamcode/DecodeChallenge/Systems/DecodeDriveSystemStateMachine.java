@@ -135,7 +135,7 @@ public class DecodeDriveSystemStateMachine {
 
         _pathIntakeRow1 = _follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(42.599, 36.244),
+                                new Pose(40.432, 36.244),
 
                                 new Pose(14.269, 36.660)
                         )
@@ -381,7 +381,10 @@ public class DecodeDriveSystemStateMachine {
                 if (_returnTriggerPulled){
                     SetReturnRoute(_targetSpecimenId);
                     ChangeState(DriveState.DriveToLaunch);
+
+                    _returnTriggerPulled = false;
                 }
+                break;
 
             case DriveToLaunch:
                 if (!_follower.isBusy()){
