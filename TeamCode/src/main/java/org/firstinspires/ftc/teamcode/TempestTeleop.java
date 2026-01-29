@@ -99,7 +99,6 @@ public class TempestTeleop extends OpMode {
 
 
 
-
         sight.init(hardwareMap);
 
 /*
@@ -225,7 +224,7 @@ public class TempestTeleop extends OpMode {
 
         //Shoot
         if(gamepad2.right_trigger > 0.2){
-            outtake.setPower(-10);
+            outtake.setPower(-10); //Change RPM to negative possibly
 
         }
         else if(gamepad2.left_trigger > 0.2){
