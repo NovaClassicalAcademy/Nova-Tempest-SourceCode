@@ -22,17 +22,19 @@ public class DecodeDriveSystemStateMachine {
     private final Follower _follower;
     private final CameraController _camera;
 
-    private PathChain _pathMoveToFirstRow;
-    private PathChain _pathApproachFirstRowStack;
+    private PathChain _pathAlignToFirstRow;
+    private PathChain _pathIntakeRow1;
     private PathChain _pathReturnFirstRowToLaunch;
 
-    private PathChain _pathMoveToSecondRow;
-    private PathChain _pathApproachSecondRowStack;
+    private PathChain _pathAlignToSecondRow;
+    private PathChain _pathIntakeRow2;
     private PathChain _pathReturnSecondRowToLaunch;
 
-    private PathChain _pathMoveToThirdRow;
-    private PathChain _pathApproachThirdRowStack;
+    private PathChain _pathAlignToThirdRow;
+    private PathChain _pathIntakeRow3;
     private PathChain _pathReturnThirdRowToLaunch;
+
+    private PathChain _moveOutOfLaunch;
 
     private final AllianceColor _allianceColor;
 
@@ -123,8 +125,7 @@ public class DecodeDriveSystemStateMachine {
     // OR DO A SWITCH CASE THAT HAS BOTH COLOR PATHS IN HERE
     private void BuildPaths(){
 
-        _pathMoveToFirstRow = _follower.pathBuilder()
-                .addPath(
+        _pathAlignToFirstRow = _follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(56.000, 8.000),
                                 new Pose(62.814, 32.989),
@@ -132,117 +133,133 @@ public class DecodeDriveSystemStateMachine {
                 .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
                 .build();
 
-        _pathApproachFirstRowStack = _follower.pathBuilder().addPath(
+        _pathIntakeRow1 = _follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(40.432, 35.385),
-                                new Pose(15.417, 35.417)))
-                .setTangentHeadingInterpolation()
+                                new Pose(42.599, 36.244),
+
+                                new Pose(14.269, 36.660)
+                        )
+                ).setTangentHeadingInterpolation()
+
                 .build();
 
         _pathReturnFirstRowToLaunch = _follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(15.417, 35.417),
-                                new Pose(53.737, 35.704),
-                                new Pose(56.000, 8.000)))
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                        new BezierLine(
+                                new Pose(14.269, 36.660),
+
+                                new Pose(55.995, 7.909)
+                        )
+                ).setTangentHeadingInterpolation()
+
                 .build();
 
-        // TODO: NEED COORDINATES UPDATED FOR SECOND ROW
-        _pathMoveToSecondRow = _follower.pathBuilder().addPath(
+        _pathAlignToSecondRow = _follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(15.417, 35.417),
-                                new Pose(53.737, 35.704),
-                                new Pose(56.000, 8.000)))
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                                new Pose(55.995, 7.909),
+                                new Pose(60.020, 59.855),
+                                new Pose(40.939, 59.853)
+                        )
+                ).setTangentHeadingInterpolation()
+
                 .build();
 
-        // TODO: NEED COORDINATES UPDATED FOR SECOND ROW
-        _pathApproachSecondRowStack = _follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(15.417, 35.417),
-                                new Pose(53.737, 35.704),
-                                new Pose(56.000, 8.000)))
-                .setTangentHeadingInterpolation()
-                .setReversed()
+        _pathIntakeRow2 = _follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(40.939, 59.853),
+
+                                new Pose(13.015, 60.431)
+                        )
+                ).setTangentHeadingInterpolation()
+
                 .build();
 
-        // TODO: NEED COORDINATES UPDATED FOR SECOND ROW
         _pathReturnSecondRowToLaunch = _follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(15.417, 35.417),
-                                new Pose(53.737, 35.704),
-                                new Pose(56.000, 8.000)))
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                        new BezierLine(
+                                new Pose(13.015, 60.431),
+
+                                new Pose(55.970, 7.797)
+                        )
+                ).setTangentHeadingInterpolation()
+
                 .build();
 
-        // TODO: NEED COORDINATES UPDATED FOR THIRD ROW
-        _pathMoveToThirdRow = _follower.pathBuilder().addPath(
+        _pathAlignToThirdRow = _follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(15.417, 35.417),
-                                new Pose(53.737, 35.704),
-                                new Pose(56.000, 8.000)))
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                                new Pose(55.970, 7.797),
+                                new Pose(73.340, 84.183),
+                                new Pose(43.391, 83.716)
+                        )
+                ).setTangentHeadingInterpolation()
+
                 .build();
 
-        // TODO: NEED COORDINATES UPDATED FOR THIRD ROW
-        _pathApproachThirdRowStack = _follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(15.417, 35.417),
-                                new Pose(53.737, 35.704),
-                                new Pose(56.000, 8.000)))
-                .setTangentHeadingInterpolation()
-                .setReversed()
+        _pathIntakeRow3 = _follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(43.391, 83.716),
+
+                                new Pose(11.914, 84.051)
+                        )
+                ).setTangentHeadingInterpolation()
+
                 .build();
 
-        // TODO: NEED COORDINATES UPDATED FOR THIRD ROW
         _pathReturnThirdRowToLaunch = _follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(15.417, 35.417),
-                                new Pose(53.737, 35.704),
-                                new Pose(56.000, 8.000)))
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                        new BezierLine(
+                                new Pose(11.914, 84.051),
+
+                                new Pose(56.249, 7.934)
+                        )
+                ).setTangentHeadingInterpolation()
+
+                .build();
+
+        _moveOutOfLaunch = _follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(56.249, 7.934),
+
+                                new Pose(46.401, 31.477)
+                        )
+                ).setTangentHeadingInterpolation()
+
                 .build();
     }
 
-    private void GoToFirstRow(){
-        _follower.followPath(_pathMoveToFirstRow);
+    private void AlignToFirstRow(int _targetSpecimenId){
+        _follower.followPath(_pathAlignToFirstRow);
     }
 
-    private void ApproachFirstRowForLoading(){
-        _follower.followPath(_pathApproachFirstRowStack);
+    private void IntakeFirstRow(){
+        _follower.followPath(_pathIntakeRow1);
     }
 
     private void ReturnFirstRowToLaunch(){
         _follower.followPath(_pathReturnFirstRowToLaunch);
     }
 
-    private void GoToSecondRow(){
-        _follower.followPath(_pathMoveToSecondRow);
+    private void AlignToSecondRow(){
+        _follower.followPath(_pathAlignToSecondRow);
     }
 
-    private void ApproachSecondRowForLoading(){
-        _follower.followPath(_pathApproachSecondRowStack);
-    }
+    private void IntakeSecondRow() { _follower.followPath(_pathIntakeRow2); }
 
     private void ReturnSecondRowToLaunch(){
         _follower.followPath(_pathReturnSecondRowToLaunch);
     }
 
-    private void GoToThirdRow(){
-        _follower.followPath(_pathMoveToThirdRow);
+    private void AlignToThirdRow(){
+        _follower.followPath(_pathAlignToThirdRow);
     }
 
-    private void ApproachThirdRowForLoading(){
-        _follower.followPath(_pathApproachThirdRowStack);
+    private void IntakeThirdRow() {
+        _follower.followPath(_pathIntakeRow3);
     }
 
     private void ReturnThirdRowToLaunch(){
         _follower.followPath(_pathReturnThirdRowToLaunch);
+    }
+
+    private void MoveOutOfLaunch() {
+        _follower.followPath(_moveOutOfLaunch);
     }
 
     private int IdentifyNextSpecimen(){
@@ -278,15 +295,15 @@ public class DecodeDriveSystemStateMachine {
     private void SetRowDestination(int targetSpecimenId){
         switch (targetSpecimenId){
             case AprilTagConstant.GPP:
-                GoToFirstRow();
+                AlignToFirstRow(_targetSpecimenId);
                 break;
 
             case AprilTagConstant.PGP:
-                GoToSecondRow();
+                AlignToSecondRow();
                 break;
 
             case AprilTagConstant.PPG:
-                GoToThirdRow();
+                AlignToThirdRow();
                 break;
 
             default:
@@ -294,19 +311,19 @@ public class DecodeDriveSystemStateMachine {
         }
     }
 
-    private void SetApproach(int targetSpecimenId){
+    private void SetIntakeRoute(int targetSpecimenId){
         switch (targetSpecimenId){
 
             case AprilTagConstant.GPP:
-                ApproachFirstRowForLoading();
+                IntakeFirstRow();
                 break;
 
             case AprilTagConstant.PGP:
-                ApproachSecondRowForLoading();
+                IntakeSecondRow();
                 break;
 
             case AprilTagConstant.PPG:
-                ApproachThirdRowForLoading();
+                IntakeThirdRow();
                 break;
         }
     }
@@ -347,7 +364,7 @@ public class DecodeDriveSystemStateMachine {
             case WaitForLoadTrigger:
 
                 if (_loadTriggerPulled){
-                    SetApproach(_targetSpecimenId);
+                    SetIntakeRoute(_targetSpecimenId);
                     ChangeState(DriveState.LoadingSpecimens);
                     _loadTriggerPulled = false;
                 }
