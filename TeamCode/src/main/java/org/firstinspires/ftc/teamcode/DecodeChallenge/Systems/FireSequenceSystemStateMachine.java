@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.IntakeControll
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.LaunchController;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.ScooperController;
 
-public class FireSequence {
-    public enum LaunchState {Idle, BallSense, SpinningUp, Fire, Reset }
+public class FireSequenceSystemStateMachine {
+    public enum LaunchState {Idle, Initialize, BallSense, SpinningUp, Fire, Reset }
     private LaunchState _currentState = LaunchState.Idle;
     private final Telemetry _telemetry;
     private final LaunchController _launcher;
@@ -25,7 +25,7 @@ public class FireSequence {
     private final double SCOOP_DOWN_TIME = 0.8;
     private final double MAX_SPIN_UP_TIME = 1.5;
 
-    public FireSequence(Telemetry telemetry, RobotMapping rc) {
+    public FireSequenceSystemStateMachine(Telemetry telemetry, RobotMapping rc) {
         _telemetry = telemetry;
         _intake = new IntakeController(rc.UpperLeftIntake, rc.UpperRightIntake, rc.LowerLeftIntake, rc.LowerRightIntake);
         _launcher = new LaunchController(rc.Goat, 2600);
@@ -43,17 +43,22 @@ public class FireSequence {
         _launcher.ReportVelocity(_telemetry);
 
         switch (_currentState) {
+            case Initialize:
+                _shotsRemaining = 3;
+                _launcher.StartVelocity();
+                ChangeState(LaunchState.Idle);
+                break;
+
             case Idle:
                 _scooper.ScoopDown();
 
-                if (_shotsRemaining > 0) {
+                if (_shotsRemaining > 0 || _stateTimer.seconds() > 2) {
                     ChangeState(LaunchState.BallSense);
                 }
                 break;
 
             case BallSense:
-                if (_distanceSensor.GetDistanceCm() < BALL_PRESENT_DISTANCE) {
-                    _launcher.StartVelocity();
+                if (_distanceSensor.GetDistanceCm() < BALL_PRESENT_DISTANCE || _stateTimer.seconds() > 2) {
                     ChangeState(LaunchState.SpinningUp);
                 }
                 break;

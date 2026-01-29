@@ -9,18 +9,19 @@ import com.pedropathing.paths.PathChain;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.AllianceColor;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.AprilTagConstant;
+import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.AprilTagDetectionController;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.CameraController;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DecodeDriveSystemStateMachine {
-
-    public enum DriveState { DecdingNextSpeciment, DriveToRow, WaitForLoadTrigger, LoadingSpecimens, LoadingComplete, DriveToLaunch, ReadyToFire, Idle }
-
+    public enum DriveState { DecdingNextSpeciment, Scan, DriveToRow, WaitForLoadTrigger, LoadingSpecimens, LoadingComplete, DriveToLaunch, ReadyToFire, Idle }
     private final Telemetry _telemetry;
     private final Follower _follower;
-    private final CameraController _camera;
+    private final AprilTagDetectionController _camera;
 
     private PathChain _pathAlignToFirstRow;
     private PathChain _pathIntakeRow1;
@@ -41,7 +42,7 @@ public class DecodeDriveSystemStateMachine {
     private List<Integer> _completedSpecimens = new ArrayList<>();
     private int _targetSpecimenId;
     private int _startingSpecimen;
-    private DriveState _currentDriveState;
+    private DriveState _currentDriveState = DriveState.Idle;
     private boolean _loadTriggerPulled;
     private boolean _returnTriggerPulled;
 
@@ -49,7 +50,7 @@ public class DecodeDriveSystemStateMachine {
         _telemetry = telemetry;
         _follower = follower;
         _allianceColor = allianceColor;
-        _camera = new CameraController(telemetry, rm.Webcam, allianceColor);
+        _camera = new AprilTagDetectionController();
 
         _loadTriggerPulled = false;
         _returnTriggerPulled = false;
@@ -57,7 +58,9 @@ public class DecodeDriveSystemStateMachine {
 
     public void Init(){
 
-        int startingSpecimen = _camera.GetDecode();
+        AprilTagDetection tag = _camera.getTagByID();
+        int startingSpecimen = tag.id;
+
         if (startingSpecimen != -1){
             _startingSpecimen = startingSpecimen;
         }
@@ -65,25 +68,23 @@ public class DecodeDriveSystemStateMachine {
             _startingSpecimen = AprilTagConstant.GPP;
         }
 
-        // TODO: MAKE THE DEFAULT START POSTION IS EITHER RED OR BLUE SIDE
         Pose startPosition = null;
+
         switch (_allianceColor)
         {
             case Blue:
-                // TODO: WHAT IS THE BLUE SIDE START POINT?
-                startPosition = new Pose(56.000, 8.000, Math.toRadians(90));
+                startPosition = new Pose(56.000, 7.937, Math.toRadians(90));
                 break;
 
             case Red:
-                // TODO: WHAT IS THE RED SIDE START POINT?
-                startPosition = new Pose(56.000, 8.000, Math.toRadians(90));
+                startPosition = new Pose(82.631, 11.471, Math.toRadians(90));
                 break;
         }
 
-        Pose cameraPosition = _camera.GetRobotPose();
+        AprilTagDetection tagDetection = _camera.getTagByID();
 
-        if (cameraPosition != null) {
-            _follower.setStartingPose(cameraPosition);
+        if (tagDetection != null) {
+            AprilTagPoseFtc cameraPose = tagDetection.ftcPose;
         }
         else {
             _follower.setStartingPose(startPosition);
@@ -91,7 +92,6 @@ public class DecodeDriveSystemStateMachine {
 
         BuildPaths();
     }
-
     public void ScanNextSpecimen(){
         if (_currentDriveState == DriveState.ReadyToFire){
             MarkSpecimentComplete(_targetSpecimenId);
@@ -102,7 +102,9 @@ public class DecodeDriveSystemStateMachine {
     public void StartLoading(){
         _loadTriggerPulled = true;
     }
-
+    public void Test(){
+        _follower.followPath(_moveOutOfLaunch);
+    }
     public void ReturnToLaunch(){
         _returnTriggerPulled = true;
     }
@@ -348,6 +350,16 @@ public class DecodeDriveSystemStateMachine {
     public DriveState GetState(){
 
         switch (_currentDriveState){
+
+            case Scan:
+                _camera.Update();
+                AprilTagDetection _targetBasket = _camera.getTagByID();
+
+                if (_targetBasket != null){
+                    _telemetry.addData("Target Found!", _targetBasket.id);
+                    ChangeState(DriveState.DecdingNextSpeciment);
+                }
+                break;
 
             case DecdingNextSpeciment:
                 _targetSpecimenId = IdentifyNextSpecimen();

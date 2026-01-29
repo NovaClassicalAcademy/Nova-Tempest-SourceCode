@@ -17,7 +17,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AprilTagWebcam {
+public class AprilTagDetectionController {
     private AprilTagProcessor _aprilTagProcessor;
     private WebcamName _webCam;
     private VisionPortal _visionPortal;
@@ -67,9 +67,9 @@ public class AprilTagWebcam {
         }
     }
 
-    public AprilTagDetection getTagByID(int id){
+    public AprilTagDetection getTagByID(){
         for (AprilTagDetection detection : _detectionTags){
-            if (detection.id == id){
+            if (detection.id == 20 || detection.id == 24){
                 return detection;
             }
         }
