@@ -10,7 +10,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.AllianceColor;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.AprilTagConstant;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.AprilTagDetectionController;
-import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.CameraController;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
@@ -59,26 +58,30 @@ public class DecodeDriveSystemStateMachine {
     public void Init(){
 
         AprilTagDetection tag = _camera.getTagByID();
-        int startingSpecimen = tag.id;
 
-        if (startingSpecimen != -1){
-            _startingSpecimen = startingSpecimen;
-        }
-        else{
-            _startingSpecimen = AprilTagConstant.GPP;
+        if (tag != null) {
+            int startingSpecimen = tag.id;
+
+
+            if (startingSpecimen != -1) {
+                _startingSpecimen = startingSpecimen;
+            } else {
+                _startingSpecimen = AprilTagConstant.GPP;
+            }
         }
 
         Pose startPosition = null;
 
-        switch (_allianceColor)
-        {
-            case Blue:
-                startPosition = new Pose(56.000, 7.937, Math.toRadians(90));
-                break;
+        if (_allianceColor != null) {
+            switch (_allianceColor) {
+                case Blue:
+                    startPosition = new Pose(56.000, 7.937, Math.toRadians(90));
+                    break;
 
-            case Red:
-                startPosition = new Pose(82.631, 11.471, Math.toRadians(90));
-                break;
+                case Red:
+                    startPosition = new Pose(82.631, 11.471, Math.toRadians(90));
+                    break;
+            }
         }
 
         AprilTagDetection tagDetection = _camera.getTagByID();
@@ -105,6 +108,7 @@ public class DecodeDriveSystemStateMachine {
     public void Test(){
         _follower.followPath(_moveOutOfLaunch);
     }
+
     public void ReturnToLaunch(){
         _returnTriggerPulled = true;
     }
@@ -162,7 +166,6 @@ public class DecodeDriveSystemStateMachine {
                                 new Pose(40.939, 59.853)
                         )
                 ).setTangentHeadingInterpolation()
-
                 .build();
 
         _pathIntakeRow2 = _follower.pathBuilder().addPath(
@@ -217,11 +220,11 @@ public class DecodeDriveSystemStateMachine {
 
         _moveOutOfLaunch = _follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(56.249, 7.934),
+                                new Pose(61.531, 6.361),
 
-                                new Pose(46.401, 31.477)
+                                new Pose(61.861, 33.183)
                         )
-                ).setTangentHeadingInterpolation()
+                ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
 
                 .build();
     }

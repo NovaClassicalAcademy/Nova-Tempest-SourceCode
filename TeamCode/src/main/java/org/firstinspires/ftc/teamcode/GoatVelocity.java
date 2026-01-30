@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "Launcher - Velocity Control")
@@ -20,7 +21,7 @@ public class GoatVelocity extends LinearOpMode {
     // If motor turns faster than wheel, adjust accordingly
 
     // Example target RPM for launcher wheel
-    private static final double TARGET_RPM = 5500;
+    private static final double TARGET_RPM = -6000;
 
     // Safety/timeouts
     private static final double SPINUP_TIMEOUT = 4.0; // seconds to wait for spin-up
@@ -29,7 +30,9 @@ public class GoatVelocity extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         launcher = hardwareMap.get(DcMotorEx.class, LAUNCHER_NAME);
         // motor direction depending on how you wired it
-        launcher.setDirection(DcMotor.Direction.FORWARD);
+        launcher.setDirection(DcMotor.Direction.REVERSE);
+        launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // ensure using encoder
+
 
         // Use RUN_USING_ENCODER so velocity control uses encoder feedback
         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -51,8 +54,8 @@ public class GoatVelocity extends LinearOpMode {
 
             if (gamepad1.a) {
                 // Convert target RPM to ticks per second
-                double ticksPerSecond = rpmToTicksPerSecond(targetRPM, TICKS_PER_REV, GEAR_RATIO);
-                launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // ensure using encoder
+                double ticksPerSecond = rpmToTicksPerSecond(TARGET_RPM, TICKS_PER_REV, GEAR_RATIO);
+//                launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // ensure using encoder
                 launcher.setVelocity(ticksPerSecond); // DcMotorEx uses ticks/sec
                 timer.reset();
                 // Wait up to SPINUP_TIMEOUT for RPM to stabilize (optional)

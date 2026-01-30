@@ -21,13 +21,18 @@ public class AutonomousTest extends LinearOpMode {
     private FireSequenceSystemStateMachine _fireSequence;
     private AprilTagDetectionController _camera;
     private Follower _follower;
+    private Constants _constants;
     private AllianceColor _allianceColor;
 
     @Override
     public void runOpMode() {
 
         _robotMapping = new RobotMapping(hardwareMap);
+        _follower = Constants.createFollower(hardwareMap);
         _pathing = new DecodeDriveSystemStateMachine(telemetry, _follower, _robotMapping, _allianceColor);
+
+        _pathing.Init();
+
         _fireSequence = new FireSequenceSystemStateMachine(telemetry, _robotMapping);
         _camera = new AprilTagDetectionController();
 
@@ -37,16 +42,20 @@ public class AutonomousTest extends LinearOpMode {
 
         waitForStart();
 
-        // NOTE: initialize launch variable and spin up the launcher.
-        FireSequenceSystemStateMachine.LaunchState launchState;
-
-        _pathing.Init();
         _pathing.Test();
-//
-//        while (opModeIsActive()) {
+
+        // NOTE: initialize launch variable and spin up the launcher.
+//        FireSequenceSystemStateMachine.LaunchState launchState;
+
+        while (opModeIsActive()) {
 //            switch (_currentAutoState) {
 //                case Start:
 //            }
-//        }
+            _follower.update();
+
+            if (!_follower.isBusy()){
+                stop();
+            }
+        }
     }
 }
