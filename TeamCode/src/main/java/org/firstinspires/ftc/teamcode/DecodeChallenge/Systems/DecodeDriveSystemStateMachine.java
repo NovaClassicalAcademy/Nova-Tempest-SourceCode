@@ -105,9 +105,6 @@ public class DecodeDriveSystemStateMachine {
     public void StartLoading(){
         _loadTriggerPulled = true;
     }
-    public void Test(){
-        _follower.followPath(_moveOutOfLaunch);
-    }
 
     public void ReturnToLaunch(){
         _returnTriggerPulled = true;

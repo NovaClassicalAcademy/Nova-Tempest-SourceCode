@@ -42,8 +42,6 @@ public class AutonomousTest extends LinearOpMode {
 
         waitForStart();
 
-        _pathing.Test();
-
         // NOTE: initialize launch variable and spin up the launcher.
 //        FireSequenceSystemStateMachine.LaunchState launchState;
 
