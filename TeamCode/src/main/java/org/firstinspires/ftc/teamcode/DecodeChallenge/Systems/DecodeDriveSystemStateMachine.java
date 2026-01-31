@@ -76,11 +76,11 @@ public class DecodeDriveSystemStateMachine {
             if (_allianceColor != null) {
                 switch (_allianceColor) {
                     case Blue:
-                        startPosition = new Pose(56.000, 7.937, Math.toRadians(90));
+                        startPosition = new Pose(61.531, 6.361);
                         break;
 
                     case Red:
-                        startPosition = new Pose(82.631, 11.471, Math.toRadians(90));
+                        startPosition = new Pose(82.631, 11.471);
                         break;
                 }
             }
@@ -117,19 +117,18 @@ public class DecodeDriveSystemStateMachine {
         return _currentDriveState == DriveState.ReadyToFire;
     }
 
-    // TODO: THIS WILL HAVE TO CHANGE BASED ON TEAM COLOR
-    // WE COULD ABSTRACT THIS BUILD PATHS INTO SEPARATE CLASSES
-    // SO WE CAN HAVE ONE FOR A BLUE AND RED AND PASS IN REFERENCE,
-    // OR DO A SWITCH CASE THAT HAS BOTH COLOR PATHS IN HERE
     private void BuildPaths(){
 
         _pathAlignToFirstRow = _follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(56.000, 8.000),
-                                new Pose(62.814, 32.989),
-                                new Pose(40.432, 35.385)))
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
+                                new Pose(65.138, 8.603),
+                                new Pose(66.889, 35.930),
+                                new Pose(43.425, 35.846)
+                        )
+                ).setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
+
 
         _pathIntakeRow1 = _follower.pathBuilder().addPath(
                         new BezierLine(
@@ -138,7 +137,7 @@ public class DecodeDriveSystemStateMachine {
                                 new Pose(14.269, 36.660)
                         )
                 ).setTangentHeadingInterpolation()
-
+                .setReversed()
                 .build();
 
         _pathReturnFirstRowToLaunch = _follower.pathBuilder().addPath(
@@ -148,7 +147,7 @@ public class DecodeDriveSystemStateMachine {
                                 new Pose(55.995, 7.909)
                         )
                 ).setTangentHeadingInterpolation()
-
+                .setReversed()
                 .build();
 
         _pathAlignToSecondRow = _follower.pathBuilder().addPath(
@@ -158,6 +157,7 @@ public class DecodeDriveSystemStateMachine {
                                 new Pose(40.939, 59.853)
                         )
                 ).setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
 
         _pathIntakeRow2 = _follower.pathBuilder().addPath(
@@ -167,7 +167,7 @@ public class DecodeDriveSystemStateMachine {
                                 new Pose(13.015, 60.431)
                         )
                 ).setTangentHeadingInterpolation()
-
+                .setReversed()
                 .build();
 
         _pathReturnSecondRowToLaunch = _follower.pathBuilder().addPath(
@@ -177,7 +177,7 @@ public class DecodeDriveSystemStateMachine {
                                 new Pose(55.970, 7.797)
                         )
                 ).setTangentHeadingInterpolation()
-
+                .setReversed()
                 .build();
 
         _pathAlignToThirdRow = _follower.pathBuilder().addPath(
@@ -187,7 +187,7 @@ public class DecodeDriveSystemStateMachine {
                                 new Pose(43.391, 83.716)
                         )
                 ).setTangentHeadingInterpolation()
-
+                .setReversed()
                 .build();
 
         _pathIntakeRow3 = _follower.pathBuilder().addPath(
@@ -197,7 +197,7 @@ public class DecodeDriveSystemStateMachine {
                                 new Pose(11.914, 84.051)
                         )
                 ).setTangentHeadingInterpolation()
-
+                .setReversed()
                 .build();
 
         _pathReturnThirdRowToLaunch = _follower.pathBuilder().addPath(
@@ -207,7 +207,7 @@ public class DecodeDriveSystemStateMachine {
                                 new Pose(56.249, 7.934)
                         )
                 ).setTangentHeadingInterpolation()
-
+                .setReversed()
                 .build();
 
         _moveOutOfLaunch = _follower.pathBuilder().addPath(
@@ -217,7 +217,7 @@ public class DecodeDriveSystemStateMachine {
                                 new Pose(61.861, 33.183)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
-
+                .setReversed()
                 .build();
     }
 

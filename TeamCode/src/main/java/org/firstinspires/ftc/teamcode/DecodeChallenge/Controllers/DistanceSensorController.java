@@ -14,10 +14,6 @@ public class DistanceSensorController {
         _distanceSensor = (DistanceSensor) colorSensor;
     }
 
-    public double GetDistanceInch(){
-        return _distanceSensor.getDistance(DistanceUnit.INCH);
-    }
-
     public double GetDistanceCm(){
         return _distanceSensor.getDistance(DistanceUnit.CM);
     }
