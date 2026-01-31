@@ -62,7 +62,7 @@ public class Constants {
             .leftEncoder_HardwareMapName("YLeftEncoder")
             .rightEncoder_HardwareMapName("YRightEncoder")
             .strafeEncoder_HardwareMapName("XEncoder")
-            .leftEncoderDirection(Encoder.FORWARD)
-            .rightEncoderDirection(Encoder.REVERSE)
-            .strafeEncoderDirection(Encoder.REVERSE);
+            .leftEncoderDirection(Encoder.REVERSE)
+            .rightEncoderDirection(Encoder.FORWARD)
+            .strafeEncoderDirection(Encoder.FORWARD);
 }

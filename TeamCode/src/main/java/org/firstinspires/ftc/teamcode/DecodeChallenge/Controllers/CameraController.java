@@ -61,8 +61,7 @@ public class CameraController {
     public Pose GetRobotPose(){
 
         int desiredGoalId = 0;
-        switch (_allianceColor)
-        {
+        switch (_allianceColor) {
             case Blue:
                 desiredGoalId = AprilTagConstant.BlueGoal;
                 break;

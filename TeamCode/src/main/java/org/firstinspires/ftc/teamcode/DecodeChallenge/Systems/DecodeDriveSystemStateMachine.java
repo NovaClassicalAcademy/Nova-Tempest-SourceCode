@@ -7,9 +7,11 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.AllianceColor;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.AprilTagConstant;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.AprilTagDetectionController;
+import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.CameraController;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
@@ -21,6 +23,7 @@ public class DecodeDriveSystemStateMachine {
     private final Telemetry _telemetry;
     private final Follower _follower;
     private final AprilTagDetectionController _camera;
+    private final CameraController _cameraConrtroller;
 
     private PathChain _pathAlignToFirstRow;
     private PathChain _pathIntakeRow1;
@@ -50,6 +53,7 @@ public class DecodeDriveSystemStateMachine {
         _follower = follower;
         _allianceColor = allianceColor;
         _camera = new AprilTagDetectionController();
+        _cameraConrtroller = new CameraController(_telemetry, rm.Webcam, _allianceColor);
 
         _loadTriggerPulled = false;
         _returnTriggerPulled = false;
@@ -57,41 +61,32 @@ public class DecodeDriveSystemStateMachine {
 
     public void Init(){
 
-        AprilTagDetection tag = _camera.getTagByID();
+        int startingSpecimen = _camera.GetAprilTag();
 
-        if (tag != null) {
-            int startingSpecimen = tag.id;
+        if (startingSpecimen != -1) {
+            _startingSpecimen = startingSpecimen;
+        } else {
+            _startingSpecimen = AprilTagConstant.GPP;
+        }
 
+        Pose startPosition = _cameraConrtroller.GetRobotPose();
 
-            if (startingSpecimen != -1) {
-                _startingSpecimen = startingSpecimen;
-            } else {
-                _startingSpecimen = AprilTagConstant.GPP;
+        if (startPosition == null) {
+
+            if (_allianceColor != null) {
+                switch (_allianceColor) {
+                    case Blue:
+                        startPosition = new Pose(56.000, 7.937, Math.toRadians(90));
+                        break;
+
+                    case Red:
+                        startPosition = new Pose(82.631, 11.471, Math.toRadians(90));
+                        break;
+                }
             }
         }
 
-        Pose startPosition = null;
-
-        if (_allianceColor != null) {
-            switch (_allianceColor) {
-                case Blue:
-                    startPosition = new Pose(56.000, 7.937, Math.toRadians(90));
-                    break;
-
-                case Red:
-                    startPosition = new Pose(82.631, 11.471, Math.toRadians(90));
-                    break;
-            }
-        }
-
-        AprilTagDetection tagDetection = _camera.getTagByID();
-
-        if (tagDetection != null) {
-            AprilTagPoseFtc cameraPose = tagDetection.ftcPose;
-        }
-        else {
-            _follower.setStartingPose(startPosition);
-        }
+        _follower.setStartingPose(startPosition);
 
         BuildPaths();
     }
@@ -226,41 +221,41 @@ public class DecodeDriveSystemStateMachine {
                 .build();
     }
 
-    private void AlignToFirstRow(int _targetSpecimenId){
+    public void AlignToFirstRow(int _targetSpecimenId){
         _follower.followPath(_pathAlignToFirstRow);
     }
 
-    private void IntakeFirstRow(){
+    public void IntakeFirstRow(){
         _follower.followPath(_pathIntakeRow1);
     }
 
-    private void ReturnFirstRowToLaunch(){
+    public void ReturnFirstRowToLaunch(){
         _follower.followPath(_pathReturnFirstRowToLaunch);
     }
 
-    private void AlignToSecondRow(){
+    public void AlignToSecondRow(){
         _follower.followPath(_pathAlignToSecondRow);
     }
 
-    private void IntakeSecondRow() { _follower.followPath(_pathIntakeRow2); }
+    public void IntakeSecondRow() { _follower.followPath(_pathIntakeRow2); }
 
-    private void ReturnSecondRowToLaunch(){
+    public void ReturnSecondRowToLaunch(){
         _follower.followPath(_pathReturnSecondRowToLaunch);
     }
 
-    private void AlignToThirdRow(){
+    public void AlignToThirdRow(){
         _follower.followPath(_pathAlignToThirdRow);
     }
 
-    private void IntakeThirdRow() {
+    public void IntakeThirdRow() {
         _follower.followPath(_pathIntakeRow3);
     }
 
-    private void ReturnThirdRowToLaunch(){
+    public void ReturnThirdRowToLaunch(){
         _follower.followPath(_pathReturnThirdRowToLaunch);
     }
 
-    private void MoveOutOfLaunch() {
+    public void MoveOutOfLaunch() {
         _follower.followPath(_moveOutOfLaunch);
     }
 
@@ -353,10 +348,11 @@ public class DecodeDriveSystemStateMachine {
 
             case Scan:
                 _camera.Update();
-                AprilTagDetection _targetBasket = _camera.getTagByID();
 
-                if (_targetBasket != null){
-                    _telemetry.addData("Target Found!", _targetBasket.id);
+                int targetBasket = _camera.GetAprilTag();
+
+                if (targetBasket == -1){
+                    _telemetry.addData("Target Found!", targetBasket);
                     ChangeState(DriveState.DecdingNextSpeciment);
                 }
                 break;
