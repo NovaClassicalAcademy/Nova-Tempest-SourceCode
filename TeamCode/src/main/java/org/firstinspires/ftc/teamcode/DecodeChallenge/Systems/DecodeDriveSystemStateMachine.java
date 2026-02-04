@@ -24,29 +24,26 @@ public class DecodeDriveSystemStateMachine {
     private final Follower _follower;
     private final AprilTagDetectionController _camera;
     private final CameraController _cameraConrtroller;
+    private final AllianceColor _allianceColor;
 
     private PathChain _pathAlignToFirstRow;
     private PathChain _pathIntakeRow1;
     private PathChain _pathReturnFirstRowToLaunch;
-
     private PathChain _pathAlignToSecondRow;
     private PathChain _pathIntakeRow2;
     private PathChain _pathReturnSecondRowToLaunch;
-
     private PathChain _pathAlignToThirdRow;
     private PathChain _pathIntakeRow3;
     private PathChain _pathReturnThirdRowToLaunch;
-
     private PathChain _moveOutOfLaunch;
 
-    private final AllianceColor _allianceColor;
-
+    private Pose _startPose;
     private List<Integer> _completedSpecimens = new ArrayList<>();
     private int _targetSpecimenId;
     private int _startingSpecimen;
     private DriveState _currentDriveState = DriveState.Idle;
-    private boolean _loadTriggerPulled;
-    private boolean _returnTriggerPulled;
+    private boolean _loadTriggerPulled = false;
+    private boolean _returnTriggerPulled = false;
 
     public DecodeDriveSystemStateMachine(Telemetry telemetry, Follower follower, RobotMapping rm, AllianceColor allianceColor) {
         _telemetry = telemetry;
@@ -54,9 +51,6 @@ public class DecodeDriveSystemStateMachine {
         _allianceColor = allianceColor;
         _camera = new AprilTagDetectionController();
         _cameraConrtroller = new CameraController(_telemetry, rm.Webcam, _allianceColor);
-
-        _loadTriggerPulled = false;
-        _returnTriggerPulled = false;
     }
 
     public void Init(){
@@ -76,7 +70,7 @@ public class DecodeDriveSystemStateMachine {
             if (_allianceColor != null) {
                 switch (_allianceColor) {
                     case Blue:
-                        startPosition = new Pose(61.531, 6.361);
+                        startPosition = new Pose(65.138, 8.603);
                         break;
 
                     case Red:
