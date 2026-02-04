@@ -54,31 +54,28 @@ public class AutonomousTest extends LinearOpMode {
         _stateTimer.startTime();
 
         while (opModeIsActive()) {
-//            switch (_currentAutoState) {
-//                case Start:
-//            }
             _follower.update();
 
             switch (_currentAutoState) {
                 case Start:
-                    if (!_follower.isBusy() && step == 0) {
+                    if (step == 0) {
                         _pathing.AlignToFirstRow(21);
                         step = 1;
-
                         _stateTimer.reset();
 
                         telemetry.addData("In Step", "1");
                     }
 
-                    if (!_follower.isBusy() && step == 1 && _stateTimer.milliseconds() > 100){
-                        telemetry.addData("Status", "Step 1 is Complete");
+                    if (!_follower.isBusy() && step == 1 && _stateTimer.milliseconds() > 500){
+                        telemetry.addData("Status", "Step 1 Complete");
                         _currentAutoState = RobotState.Idle;
                     }
                     break;
 
                 case Idle:
                     telemetry.addData("In Step", "Finish");
-                    stop();
+                    _follower.holdPoint(_follower.getPose());
+                    telemetry.addData("Status", "Holding Position");
                     break;
             }
 

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.DecodeChallenge.Systems;
 
+import android.graphics.Paint;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -54,34 +56,60 @@ public class DecodeDriveSystemStateMachine {
     }
 
     public void Init(){
+//        int startingSpecimen = _camera.GetAprilTag();
+//
+//        if (startingSpecimen != -1) {
+//            _startingSpecimen = startingSpecimen;
+//        } else {
+//            _startingSpecimen = AprilTagConstant.GPP;
+//        }
+//
+//        Pose startPosition = _cameraConrtroller.GetRobotPose();
+//
+//        if (startPosition == null) {
+//
+//            if (_allianceColor != null) {
+//                switch (_allianceColor) {
+//                    case Blue:
+//                        startPosition = new Pose(65.138, 8.603);
+//                        break;
+//
+//                    case Red:
+//                        startPosition = new Pose(82.631, 11.471);
+//                        break;
+//                }
+//            }
+//        }
+//
+//        _follower.setStartingPose(startPosition);
+//
+//        BuildPaths();
+        long startTime = System.currentTimeMillis();
+        Pose startPosition = null;
 
-        int startingSpecimen = _camera.GetAprilTag();
+        while (startPosition == null && (System.currentTimeMillis() - startTime) < 3000) {
+            startPosition = _cameraConrtroller.GetRobotPose();
 
-        if (startingSpecimen != -1) {
-            _startingSpecimen = startingSpecimen;
-        } else {
-            _startingSpecimen = AprilTagConstant.GPP;
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {}
         }
 
-        Pose startPosition = _cameraConrtroller.GetRobotPose();
-
-        if (startPosition == null) {
-
-            if (_allianceColor != null) {
-                switch (_allianceColor) {
-                    case Blue:
-                        startPosition = new Pose(65.138, 8.603);
-                        break;
-
-                    case Red:
-                        startPosition = new Pose(82.631, 11.471);
-                        break;
-                }
+        if (startPosition == null){
+            if (_allianceColor == AllianceColor.Blue){
+                startPosition = new Pose(60.506, 11.073);
             }
+            else if (_allianceColor == AllianceColor.Red){
+                startPosition = new Pose(82.631, 11.471, Math.toRadians(180));
+            }
+
+            _telemetry.addLine("Camera Timeout: Using Defult Pose");
+        } else {
+            _telemetry.addLine("Camera Initialized: Pose Locked");
         }
 
         _follower.setStartingPose(startPosition);
-
+        _telemetry.update();
         BuildPaths();
     }
     public void ScanNextSpecimen(){
@@ -115,32 +143,31 @@ public class DecodeDriveSystemStateMachine {
 
         _pathAlignToFirstRow = _follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(65.138, 8.603),
-                                new Pose(66.889, 35.930),
-                                new Pose(43.425, 35.846)
+                                new Pose(60.506, 11.073),
+                                new Pose(57.886, 37.997),
+                                new Pose(44.613, 34.822)
                         )
-                ).setTangentHeadingInterpolation()
-                .setReversed()
+                ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
                 .build();
 
 
         _pathIntakeRow1 = _follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(40.432, 36.244),
+                                new Pose(44.613, 34.822),
 
-                                new Pose(14.269, 36.660)
+                                new Pose(17.183, 35.543)
                         )
                 ).setTangentHeadingInterpolation()
-                .setReversed()
+
                 .build();
 
         _pathReturnFirstRowToLaunch = _follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(14.269, 36.660),
+                                new Pose(17.183, 35.543),
 
-                                new Pose(55.995, 7.909)
+                                new Pose(60.454, 10.723)
                         )
-                ).setTangentHeadingInterpolation()
+                ).setConstantHeadingInterpolation(Math.toRadians(110))
                 .setReversed()
                 .build();
 
