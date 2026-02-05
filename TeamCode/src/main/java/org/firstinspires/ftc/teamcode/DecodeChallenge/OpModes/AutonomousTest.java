@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.IntakeControll
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Paths.BluePathLibrary;
 //import org.firstinspires.ftc.teamcode.DecodeChallenge.Paths.RedPathLibrary;
 //import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.DecodeDriveSystemStateMachine;
+import org.firstinspires.ftc.teamcode.DecodeChallenge.Paths.TestPath;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.RobotMapping;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.PedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.FireSequenceSystemStateMachine;
@@ -26,7 +27,7 @@ public class AutonomousTest extends LinearOpMode {
 //    private DecodeDriveSystemStateMachine _pathing;
     private FireSequenceSystemStateMachine _fireSequence;
     private IntakeController _intake;
-    private BluePathLibrary _pathTest;
+    private TestPath _pathTest;
     private Follower _follower;
     private ElapsedTime _stateTimer;
     private AllianceColor _allianceColor = AllianceColor.Blue;
@@ -40,7 +41,7 @@ public class AutonomousTest extends LinearOpMode {
 //        _pathing = new DecodeDriveSystemStateMachine(telemetry, _follower, _robotMapping, _allianceColor);
 //        _pathing.Init();
 
-        _pathTest = new BluePathLibrary(_follower);
+        _pathTest = new TestPath(_follower);
 
         _stateTimer = new ElapsedTime();
 
@@ -62,7 +63,7 @@ public class AutonomousTest extends LinearOpMode {
 
                 case Start:
                     if (!_follower.isBusy()) {
-                        _follower.followPath(_pathTest.AlignToFirst);
+                        _follower.followPath(_pathTest.Path1);
                         _currentAutoState = RobotState.Preloaded;
                         _stateTimer.reset();
                     }
@@ -70,18 +71,18 @@ public class AutonomousTest extends LinearOpMode {
 
                 case Preloaded:
                     if (!_follower.isBusy() && _stateTimer.seconds() > 10) {
-                        _follower.followPath(_pathTest.IntakeFirstRow);
-                        _currentAutoState = RobotState.Return;
+                        _follower.followPath(_pathTest.Path2);
+                        _currentAutoState = RobotState.Idle;
                         _stateTimer.reset();
                     }
                     break;
-
-                case Return:
-                    if (!_follower.isBusy() && _stateTimer.seconds() > 10) {
-                        _follower.followPath(_pathTest.ReturnFirstRow);
-                        _currentAutoState = RobotState.Idle;
-                    }
-                    break;
+//
+//                case Return:
+//                    if (!_follower.isBusy() && _stateTimer.seconds() > 10) {
+//                        _follower.followPath(_pathTest.);
+//                        _currentAutoState = RobotState.Idle;
+//                    }
+//                    break;
 
                 case Idle:
                     break;
