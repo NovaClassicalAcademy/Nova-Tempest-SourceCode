@@ -21,11 +21,13 @@ public class HardwareClass {
     public DcMotor YLeftEncoder = null;
     public DcMotor YRightEncoder = null;
     public DcMotor XEncoder = null;
-    public CRServo RouletteServo = null;
+
     public CRServo IntakeLowerLeft = null;
     public CRServo IntakeLowerRight = null;
     public CRServo IntakeUpperLeft = null;
     public CRServo IntakeUpperRight = null;
+
+    public Servo lever = null;
     public DcMotor ShooterMotor = null;
     public NormalizedColorSensor NormalizedColorSensor = null;
     public WebcamName WebCam = null;
@@ -54,9 +56,8 @@ public class HardwareClass {
 
 
         ShooterMotor = hardwareMap.get(DcMotor.class, "Goat");
+        lever = hardwareMap.get(Servo.class, "scooper");
 
-
-        RouletteServo = hardwareMap.get(CRServo.class, "RouletteServo");//
 
 
         NormalizedColorSensor = hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");

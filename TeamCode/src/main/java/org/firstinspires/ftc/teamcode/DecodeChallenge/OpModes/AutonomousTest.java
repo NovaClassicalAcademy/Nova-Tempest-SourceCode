@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.DecodeChallenge.OpModes;
 
-import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
