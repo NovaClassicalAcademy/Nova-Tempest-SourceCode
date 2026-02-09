@@ -24,13 +24,15 @@
 //
 //    private RobotState _currentAutoState = RobotState.Start;
 //    private RobotMapping _robotMapping;
-////    private DecodeDriveSystemStateMachine _pathing;
 //    private FireSequenceSystemStateMachine _fireSequence;
 //    private IntakeController _intake;
 //    private TestPath _pathTest;
 //    private Follower _follower;
 //    private ElapsedTime _stateTimer;
 //    private AllianceColor _allianceColor = AllianceColor.Blue;
+//    private DistanceSensorController RearDistSensor;
+//    private DistanceSensorController FrontDistSensor;
+//
 //
 //    @Override
 //    public void runOpMode() {

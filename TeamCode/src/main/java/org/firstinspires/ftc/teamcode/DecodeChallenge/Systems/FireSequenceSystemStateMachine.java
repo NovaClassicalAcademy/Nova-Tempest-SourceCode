@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.ScooperControl
 
 public class FireSequenceSystemStateMachine {
     public enum LaunchState {Idle, Initialize, BallSense, SpinningUp, Fire, Reset }
+    public enum LaunchDistance {Far, Close}
     private LaunchState _currentState = LaunchState.Idle;
     private final Telemetry _telemetry;
     private final LaunchController _launcher;
@@ -20,6 +21,9 @@ public class FireSequenceSystemStateMachine {
 
     public  int _shotsRemaining = 0;
 
+    private final double FAR_LAUNCH_VELOCITY = 6000;
+    private final double CLOSE_LAUNCH_VELOCITY = 5000;
+
     private final double BALL_PRESENT_DISTANCE = 2.0;
     private final double SCOOP_UP_TIME = 0.8;
     private final double SCOOP_DOWN_TIME = 0.8;
@@ -28,13 +32,24 @@ public class FireSequenceSystemStateMachine {
     public FireSequenceSystemStateMachine(Telemetry telemetry, RobotMapping rc) {
         _telemetry = telemetry;
         _intake = new IntakeController(rc.UpperLeftIntake, rc.UpperRightIntake, rc.LowerLeftIntake, rc.LowerRightIntake);
-        _launcher = new LaunchController(rc.Goat, 2600);
+        _launcher = new LaunchController(rc.Goat);
         _scooper = new ScooperController(rc.Scooper);
         _distanceSensor = new DistanceSensorController(rc.ColorSensor);
     }
 
-    public void setLaunchVelocity (double velocity){
-        _launcher.updateTargetVelocity(velocity);
+    public void InitializeSpinUp(LaunchDistance launchDistance){
+        switch (launchDistance){
+            case Far:
+                _launcher.StartVelocity(FAR_LAUNCH_VELOCITY);
+                break;
+
+            case Close:
+                _launcher.StartVelocity(CLOSE_LAUNCH_VELOCITY);
+                break;
+
+            default:
+                _telemetry.addLine("No Launch Distance Commanded");
+        }
     }
 
     public LaunchState GetStatus() {
@@ -45,7 +60,6 @@ public class FireSequenceSystemStateMachine {
         switch (_currentState) {
             case Initialize:
                 _shotsRemaining = 3;
-                _launcher.StartVelocity();
                 ChangeState(LaunchState.Idle);
                 break;
 

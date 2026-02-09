@@ -15,17 +15,16 @@ public class LaunchController {
     private double _targetVelocity;
     private final ElapsedTime _timer = new ElapsedTime();
 
-    public LaunchController(DcMotorEx motor, double targetVelocity) {
+    public LaunchController(DcMotorEx motor) {
         _motor = motor;
 
-        _targetVelocity = targetVelocity;
         _rpmTolerance = Range.clip(_targetVelocity * 0.1, 0, 50);
 
-        PIDFCoefficients newCoefficients = new PIDFCoefficients(10.0, 0.0, 0.1, ((double) 32767 / _targetVelocity));
-        motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, newCoefficients);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void StartVelocity()
+    public void StartVelocity(double targetVelocity)
     {
+        _targetVelocity = targetVelocity;
         _motor.setVelocity(_targetVelocity);
     }
 
@@ -43,7 +42,12 @@ public class LaunchController {
         telemetry.addData("Goat Power", _motor.getPower());
     }
 
-    public void updateTargetVelocity(double newVelocity){
-        _targetVelocity = newVelocity;
+    private double rpmToTicksPerSecond(double rpm, int ticksPerRev, double gearRatio) {
+        // rpm -> ticks/sec
+        return (rpm / 60.0) * ticksPerRev * gearRatio;
+    }
+
+    private double ticksPerSecondToRpm(double ticksPerSecond, int ticksPerRev, double gearRatio) {
+        return (ticksPerSecond / (ticksPerRev * gearRatio)) * 60.0;
     }
 }

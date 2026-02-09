@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 public class RobotMapping {
-    public DcMotor FrontLeftDrive, FrontRightDrive, BackLeftDrive, BackRightDrive;
-    public DcMotor YLeftEncoder, YRightEncoder, XEncoder;
+    public DcMotorEx FrontLeftDrive, FrontRightDrive, BackLeftDrive, BackRightDrive;
+    public DcMotorEx YLeftEncoder, YRightEncoder, XEncoder;
     public CRServo LowerLeftIntake, LowerRightIntake, UpperLeftIntake, UpperRightIntake;
     public DcMotorEx Goat;
     public Servo Scooper;
@@ -38,10 +38,10 @@ public class RobotMapping {
     }
 
     private void InitDriveMotors(){
-        FrontLeftDrive = _hardwareMap.get(DcMotor.class, "FrontLeft");
-        FrontRightDrive = _hardwareMap.get(DcMotor.class, "FrontRight");
-        BackLeftDrive = _hardwareMap.get(DcMotor.class, "BackLeft");
-        BackRightDrive = _hardwareMap.get(DcMotor.class, "BackRight");
+        FrontLeftDrive = _hardwareMap.get(DcMotorEx.class, "FrontLeft");
+        FrontRightDrive = _hardwareMap.get(DcMotorEx.class, "FrontRight");
+        BackLeftDrive = _hardwareMap.get(DcMotorEx.class, "BackLeft");
+        BackRightDrive = _hardwareMap.get(DcMotorEx.class, "BackRight");
 
         FrontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FrontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -65,13 +65,21 @@ public class RobotMapping {
     }
 
     private void InitEncoderMotors() {
-        YLeftEncoder = _hardwareMap.get(DcMotor.class, "YLeftEncoder");
-        YRightEncoder = _hardwareMap.get(DcMotor.class, "YRightEncoder");
-        XEncoder = _hardwareMap.get(DcMotor.class, "XEncoder");
+        YLeftEncoder = _hardwareMap.get(DcMotorEx.class, "YLeftEncoder");
+        YRightEncoder = _hardwareMap.get(DcMotorEx.class, "YRightEncoder");
+        XEncoder = _hardwareMap.get(DcMotorEx.class, "XEncoder");
 
-        YLeftEncoder.setDirection(DcMotor.Direction.REVERSE);
-        YRightEncoder.setDirection(DcMotor.Direction.FORWARD);
-        XEncoder.setDirection(DcMotor.Direction.FORWARD);
+        YLeftEncoder.setDirection(DcMotorEx.Direction.REVERSE);
+        YRightEncoder.setDirection(DcMotorEx.Direction.FORWARD);
+        XEncoder.setDirection(DcMotorEx.Direction.REVERSE);
+
+        YLeftEncoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        YRightEncoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        XEncoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        YLeftEncoder.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        YRightEncoder.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        XEncoder.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     private void InitIntakeMotors() {

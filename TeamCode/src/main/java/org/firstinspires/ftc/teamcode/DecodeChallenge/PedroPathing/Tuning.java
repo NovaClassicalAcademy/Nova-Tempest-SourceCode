@@ -801,7 +801,7 @@ class TranslationalTuner extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/12/2024
  */
-class HeadingTuner extends OpMode {
+class HeadingTuner extends OpMode { /// TODO: TEST HEADING TUNER.
     public static double DISTANCE = 40;
     private boolean forward = true;
 
@@ -835,7 +835,7 @@ class HeadingTuner extends OpMode {
         forwards.setConstantHeadingInterpolation(0);
         backwards = new Path(new BezierLine(new Pose(DISTANCE + 72,72), new Pose(72,72)));
         backwards.setConstantHeadingInterpolation(0);
-        Tuning.follower.followPath(forwards);
+        Tuning.follower.followPath(backwards); //og forwards
     }
 
     /**

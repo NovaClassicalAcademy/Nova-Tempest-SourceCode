@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.DistanceSensorController;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.PedroPathing.Constants;
 
 
@@ -16,6 +17,10 @@ import org.firstinspires.ftc.teamcode.DecodeChallenge.PedroPathing.Constants;
 public class AutoTestMK1 extends OpMode {
     private Follower _follower;
     private Timer _pathTimer, _opModeTimer;
+
+//    private DistanceSensorController RearDistSensor;
+//    private DistanceSensorController FrontDistSensor;
+
 
     public enum PathState {
         STARTPOS_SHOOTPOS,
@@ -25,44 +30,10 @@ public class AutoTestMK1 extends OpMode {
 
     PathState _pathstate;
 
-    private final Pose startPositon = new Pose(59.27738264580369, 60.375533428165, Math.toRadians(90));
-    private final Pose shootPosition = new Pose(59.27738264580369, 60.375533428165, Math.toRadians(90));
+    private final Pose startPositon = new Pose(59.27738264580369, 60.375533428165, Math.toRadians(0));
+    private final Pose shootPosition = new Pose(59.27738264580369, 79.674, Math.toRadians(0));
 
     private PathChain driveStatePosShootPos;
-
-
-    public void BuildPaths(){
-        driveStatePosShootPos = _follower.pathBuilder()
-                .addPath(new BezierLine(startPositon, shootPosition))
-                .setLinearHeadingInterpolation(startPositon.getHeading(), shootPosition.getHeading())
-                .build();
-    }
-
-
-    public void statePathUpdate(){
-        switch (_pathstate){
-            case STARTPOS_SHOOTPOS:
-                _follower.followPath(driveStatePosShootPos, true);
-                setPathState(PathState.SHOOT_AND_PRELOAD);
-                break;
-
-            case SHOOT_AND_PRELOAD:
-                if(!_follower.isBusy()){
-                    telemetry.addLine("Done with Path 1");
-                }
-                break;
-
-            default:
-                telemetry.addLine("No State Commanded");
-                break;
-        }
-
-    }
-
-    public void setPathState(PathState newState){
-        _pathstate = newState;
-        _pathTimer.resetTimer();
-    }
 
     @Override
     public void init() {
@@ -91,5 +62,37 @@ public class AutoTestMK1 extends OpMode {
         telemetry.addData("y: ", _follower.getPose().getY());
         telemetry.addData("heading: ", _follower.getPose().getHeading());
         telemetry.addData("path time: ", _pathTimer.getElapsedTimeSeconds());
+    }
+
+    public void BuildPaths(){
+        driveStatePosShootPos = _follower.pathBuilder()
+                .addPath(new BezierLine(startPositon, shootPosition))
+                .setLinearHeadingInterpolation(startPositon.getHeading(), shootPosition.getHeading())
+                .build();
+    }
+
+    public void statePathUpdate(){
+        switch (_pathstate){
+            case STARTPOS_SHOOTPOS:
+                _follower.followPath(driveStatePosShootPos, true);
+                setPathState(PathState.SHOOT_AND_PRELOAD);
+                break;
+
+            case SHOOT_AND_PRELOAD:
+                if(!_follower.isBusy()){
+                    telemetry.addLine("Done with Path 1");
+                }
+                break;
+
+            default:
+                telemetry.addLine("No State Commanded");
+                break;
+        }
+
+    }
+
+    public void setPathState(PathState newState){
+        _pathstate = newState;
+        _pathTimer.resetTimer();
     }
 }
