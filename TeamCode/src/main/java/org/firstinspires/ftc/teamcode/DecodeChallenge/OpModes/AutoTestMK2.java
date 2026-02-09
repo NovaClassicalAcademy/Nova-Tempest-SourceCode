@@ -32,9 +32,8 @@ public class AutoTestMK2 extends OpMode {
 
     PathState _pathstate;
 
-    private final Pose startPositon = new Pose(56, 37.04721030042918, Math.toRadians(0));
-    private final Pose shootPosition = new Pose(56, 68.58803777800841, Math.toRadians(0));
-
+    private final Pose startPositon = new Pose(56, 37.04721030042918, Math.toRadians(90));
+    private final Pose shootPosition = new Pose(56, 90, Math.toRadians(90));
     private final Pose finalPosition = new Pose(42, 68.58803777800841, Math.toRadians(90));
 
     private PathChain driveStatePosShootPos;

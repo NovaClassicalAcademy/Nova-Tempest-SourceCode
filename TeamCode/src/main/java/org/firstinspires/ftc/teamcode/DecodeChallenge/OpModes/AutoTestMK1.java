@@ -30,8 +30,8 @@ public class AutoTestMK1 extends OpMode {
 
     PathState _pathstate;
 
-    private final Pose startPositon = new Pose(59.27738264580369, 60.375533428165, Math.toRadians(0));
-    private final Pose shootPosition = new Pose(59.27738264580369, 79.674, Math.toRadians(0));
+    private final Pose startPositon = new Pose(59.27738264580369, 60.375533428165, Math.toRadians(90));
+    private final Pose shootPosition = new Pose(59.27738264580369, 100, Math.toRadians(90));
 
     private PathChain driveStatePosShootPos;
 

@@ -69,8 +69,8 @@ public class RobotMapping {
         YRightEncoder = _hardwareMap.get(DcMotorEx.class, "YRightEncoder");
         XEncoder = _hardwareMap.get(DcMotorEx.class, "XEncoder");
 
-        YLeftEncoder.setDirection(DcMotorEx.Direction.REVERSE);
-        YRightEncoder.setDirection(DcMotorEx.Direction.FORWARD);
+        YLeftEncoder.setDirection(DcMotorEx.Direction.FORWARD);
+        YRightEncoder.setDirection(DcMotorEx.Direction.REVERSE);
         XEncoder.setDirection(DcMotorEx.Direction.REVERSE);
 
         YLeftEncoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);

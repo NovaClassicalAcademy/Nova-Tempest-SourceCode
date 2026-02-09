@@ -14,15 +14,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
+            .forwardZeroPowerAcceleration(-30.87715503481507)
+            .lateralZeroPowerAcceleration(-68.32576493005507)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0, 0))
+            .headingPIDFCoefficients(new PIDFCoefficients(1, 0, 0,0.01))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.025, 0, 0.0001, 0.6, 0.01))
+            .centripetalScaling(0.0005)
             .useSecondaryTranslationalPIDF(true)
             .useSecondaryHeadingPIDF(true)
             .useSecondaryDrivePIDF(true)
-            .forwardZeroPowerAcceleration(-36.2007)
-            .lateralZeroPowerAcceleration(-96.5001)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.07, 0, 0.01, 0.025))
-            .headingPIDFCoefficients(new PIDFCoefficients(0.6, 0, 0.02, 0.03))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.6, 0, 0.0001, 0.6, 0.025))
-            .centripetalScaling(0.0005)
             .mass(10);
 
     public static PathConstraints pathConstraints = new PathConstraints(
@@ -41,8 +41,8 @@ public class Constants {
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
-            .xVelocity(82.6200)
-            .yVelocity(62.2488)
+            .xVelocity(61.26415406706444)
+            .yVelocity(47.73220136122349)
             .leftFrontMotorName("FrontLeft")
             .rightFrontMotorName("FrontRight")
             .leftRearMotorName("BackLeft")
@@ -53,16 +53,16 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
 
     public static ThreeWheelConstants localizerConstants = new ThreeWheelConstants()
-            .forwardTicksToInches(0.002993)
-            .strafeTicksToInches(0.0029976)
-            .turnTicksToInches(0.03050)
+            .forwardTicksToInches(0.0021630231622300888)
+            .strafeTicksToInches(0.0021975519098540097)
+            .turnTicksToInches(0.003061128699210547)
             .leftPodY(7)
             .rightPodY(-7)
             .strafePodX(-2.5)
             .leftEncoder_HardwareMapName("YLeftEncoder")
             .rightEncoder_HardwareMapName("YRightEncoder")
             .strafeEncoder_HardwareMapName("XEncoder")
-            .leftEncoderDirection(Encoder.REVERSE)
-            .rightEncoderDirection(Encoder.FORWARD)
+            .leftEncoderDirection(Encoder.FORWARD)
+            .rightEncoderDirection(Encoder.REVERSE)
             .strafeEncoderDirection(Encoder.REVERSE);
 }
