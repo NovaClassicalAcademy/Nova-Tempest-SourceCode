@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.DecodeChallenge.OpModes;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
@@ -18,8 +19,6 @@ public class FinalTestAuto extends OpMode {
     public enum PathState {
         PATH_TO_LOAD_ROW_1,
         PATH_TO_ROW_1_COMPLETE,
-        ALIGN_TO_ROW_1,
-        ALIGNED_COMPLETE_1,
         LOADING_ROW_1,
         LOAD_COMPLETE_1,
         RETURN_HOME_1,
@@ -27,8 +26,6 @@ public class FinalTestAuto extends OpMode {
 
         PATH_TO_LOAD_ROW_2,
         PATH_TO_ROW_2_COMPLETE,
-        ALIGN_TO_ROW_2,
-        ALIGNED_COMPLETE_2,
         LOADING_ROW_2,
         LOAD_COMPLETE_2,
         RETURN_HOME_2,
@@ -37,8 +34,6 @@ public class FinalTestAuto extends OpMode {
 
         PATH_TO_LOAD_ROW_3,
         PATH_TO_ROW_3_COMPLETE,
-        ALIGN_TO_ROW_3,
-        ALIGNED_COMPLETE_3,
         LOADING_ROW_3,
         LOAD_COMPLETE_3,
         RETURN_HOME_3,
@@ -51,37 +46,31 @@ public class FinalTestAuto extends OpMode {
     PathState _pathstate;
 
     //------------Positions------------
-    private final Pose startPosition = new Pose(60.097, 9.229, Math.toRadians(0));
+    private final Pose startPosition = new Pose(60.71123755334281, 11.072546230440972, Math.toRadians(90));
 
-    private final Pose posRow1 = new Pose(60.097,40.147937411095285, Math.toRadians(0));
-    private final Pose alignPosToRow1 = new Pose(39.73826458036982, 40.147937411095285, Math.toRadians(0));
-    private final Pose intakePosRow1 = new Pose(13.391180654338546, 40.147937411095285, Math.toRadians(0));
+    private final Pose posRow1 = new Pose(41.97439544807963,35.61450924608818, Math.toRadians(180));
+    private final Pose intakePosRow1 = new Pose(10.981507823613088, 35.61450924608818, Math.toRadians(180));
 
-    private final Pose posRow2 = new Pose(60.097, 60.42674253200569, Math.toRadians(0));
-    private final Pose alignPosToRow2 = new Pose(42.71692745376955, 60.42674253200569);
-    private final Pose intakePosRow2 = new Pose(12.897581792318634, 60.42674253200569);
+    private final Pose posRow2 = new Pose(60.71123755334281, 60.086772830679244, Math.toRadians(90));
+    private final Pose intakePosRow2 = new Pose(11.015274618134558, 60.086772830679244, Math.toRadians(180));
 
-    private final Pose posRow3 = new Pose(60.097, 83.71692745376957, Math.toRadians(0));
-    private final Pose alignPosToRow3 = new Pose(42.15647226173542, 83.71692745376957, Math.toRadians(0));
-    private final Pose intakePosRow3 = new Pose(12.450924608819347, 83.71692745376957, Math.toRadians(0));
+    private final Pose posRow3 = new Pose(41.24292426117511, 83.76372628379883, Math.toRadians(90));
+    private final Pose intakePosRow3 = new Pose(11.9372765680858, 83.76372628379883, Math.toRadians(180));
 
-    private final Pose shootPosition = new Pose(60.097, 9.229, Math.toRadians(110)); //front is facing the basket. see how we need to switch sides.
-    private final Pose restPosition = new Pose(49.60597439544809, 33.184921763869134, Math.toRadians(0));
+    private final Pose shootPosition = new Pose(60.71123755334281, 11.072546230440972, Math.toRadians(110)); //front is facing the basket. see how we need to switch sides.
+    private final Pose restPosition = new Pose(61.01462463438415, 42.78745531361716, Math.toRadians(90));
 
     //-----------PathChains-----------
     private PathChain driveToRow1;
-    private PathChain alignToRow1;
-    private PathChain intakeRow1;
+    private PathChain loadRow1;
     private PathChain returnHomeFrom1;
 
     private PathChain driveToRow2;
-    private PathChain alignToRow2;
-    private PathChain intakeRow2;
+    private PathChain loadRow2;
     private PathChain returnHomeFrom2;
 
     private PathChain driveToRow3;
-    private PathChain alignToRow3;
-    private PathChain intakeRow3;
+    private PathChain loadRow3;
     private PathChain returnHomeFrom3;
 
     private PathChain moveOutOfLaunch;
@@ -103,68 +92,63 @@ public class FinalTestAuto extends OpMode {
 
     public void BuildPaths(){
         driveToRow1 = _follower.pathBuilder()
-                .addPath(new BezierLine(startPosition, posRow1))
-                .setLinearHeadingInterpolation(startPosition.getHeading(), posRow1.getHeading())
+                .addPath(new BezierCurve(
+                        new Pose(startPosition.getX(), startPosition.getY()),
+                        new Pose(78.020, 36.814),
+                        new Pose(posRow1.getX(), posRow1.getY()))
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
-        alignToRow1 = _follower.pathBuilder()
-                .addPath(new BezierLine(posRow1, alignPosToRow1))
-                .setLinearHeadingInterpolation(posRow1.getHeading(), alignPosToRow1.getHeading())
-                .build();
-
-        intakeRow1 = _follower.pathBuilder()
-                .addPath(new BezierLine(alignPosToRow1, intakePosRow1))
-                .setLinearHeadingInterpolation(alignPosToRow1.getHeading(), intakePosRow1.getHeading())
+        loadRow1 = _follower.pathBuilder()
+                .addPath(new BezierLine(posRow1, intakePosRow1))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
         returnHomeFrom1 = _follower.pathBuilder()
                 .addPath(new BezierLine(intakePosRow1, shootPosition))
-                .setLinearHeadingInterpolation(alignPosToRow1.getHeading(), shootPosition.getHeading())
+                .setConstantHeadingInterpolation(Math.toRadians(110))
                 .build();
 
         driveToRow2 = _follower.pathBuilder()
-                .addPath(new BezierLine(shootPosition, posRow2))
-                .setLinearHeadingInterpolation(shootPosition.getHeading(), posRow2.getHeading())
+                .addPath(new BezierCurve(
+                        new Pose(shootPosition.getX(), shootPosition.getY()),
+                        new Pose(85.205, 59.957), ///TODO: NEED TO RESTART PATH
+                        new Pose(posRow2.getX(), posRow2.getY())))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
-        alignToRow2 = _follower.pathBuilder()
-                .addPath(new BezierLine(posRow2, alignPosToRow2))
-                .setLinearHeadingInterpolation(posRow2.getHeading(), alignPosToRow2.getHeading())
-                .build();
-
-        intakeRow2 = _follower.pathBuilder()
-                .addPath(new BezierLine(alignPosToRow2, intakePosRow2))
-                .setLinearHeadingInterpolation(alignPosToRow2.getHeading(), intakePosRow2.getHeading())
+        loadRow2 = _follower.pathBuilder()
+                .addPath(new BezierLine(posRow2, intakePosRow2))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
         returnHomeFrom2 = _follower.pathBuilder()
                 .addPath(new BezierLine(intakePosRow2, shootPosition))
-                .setLinearHeadingInterpolation(intakePosRow2.getHeading(), shootPosition.getHeading())
+                .setConstantHeadingInterpolation(Math.toRadians(110))
                 .build();
 
         driveToRow3 = _follower.pathBuilder()
-                .addPath(new BezierLine(shootPosition, posRow3))
-                .setLinearHeadingInterpolation(shootPosition.getHeading(), posRow3.getHeading())
+                .addPath(new BezierCurve(
+                        new Pose(shootPosition.getX(), shootPosition.getY()),
+                        new Pose(106.081, 83.004),
+                        new Pose(posRow3.getX(), posRow3.getY())))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
-        alignToRow3 = _follower.pathBuilder()
-                .addPath(new BezierLine(posRow3, alignPosToRow3))
-                .setLinearHeadingInterpolation(posRow3.getHeading(), alignPosToRow3.getHeading())
-                .build();
-
-        intakeRow3 = _follower.pathBuilder()
-                .addPath(new BezierLine(alignPosToRow3, intakePosRow3))
-                .setLinearHeadingInterpolation(alignPosToRow3.getHeading(), intakePosRow3.getHeading())
+        loadRow3 = _follower.pathBuilder()
+                .addPath(new BezierLine(posRow3, intakePosRow3))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
         returnHomeFrom3 = _follower.pathBuilder()
                 .addPath(new BezierLine(intakePosRow3, shootPosition))
-                .setLinearHeadingInterpolation(intakePosRow3.getHeading(), shootPosition.getHeading())
+                .setConstantHeadingInterpolation(Math.toRadians(110))
                 .build();
 
         moveOutOfLaunch = _follower.pathBuilder()
                 .addPath(new BezierLine(shootPosition, restPosition))
-                .setLinearHeadingInterpolation(shootPosition.getHeading(), restPosition.getHeading())
+                .setConstantHeadingInterpolation(Math.toRadians(90))
                 .build();
     }
 
@@ -175,29 +159,19 @@ public class FinalTestAuto extends OpMode {
         switch (_pathstate){
 
             case PATH_TO_LOAD_ROW_1:
-                _follower.followPath(driveToRow1);
+                _follower.followPath(driveToRow1, true);
                 setPathState(PathState.PATH_TO_ROW_1_COMPLETE);
                 break;
 
             case PATH_TO_ROW_1_COMPLETE:
-                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
-                    setPathState(PathState.ALIGN_TO_ROW_1);
-                }
-                break;
-
-            case ALIGN_TO_ROW_1:
-                _follower.followPath(alignToRow1);
-                setPathState(PathState.ALIGNED_COMPLETE_1);
-                break;
-
-            case ALIGNED_COMPLETE_1:
                 if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
                     setPathState(PathState.LOADING_ROW_1);
                 }
                 break;
 
             case LOADING_ROW_1:
-                _follower.followPath(intakeRow1);
+                _follower.followPath(loadRow1);
+
                 setPathState(PathState.LOAD_COMPLETE_1);
                 break;
 
@@ -219,29 +193,18 @@ public class FinalTestAuto extends OpMode {
                 break;
 
             case PATH_TO_LOAD_ROW_2:
-                _follower.followPath(driveToRow2);
+                _follower.followPath(driveToRow2, true);
                 setPathState(PathState.PATH_TO_ROW_2_COMPLETE);
                 break;
 
             case PATH_TO_ROW_2_COMPLETE:
-                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
-                    setPathState(PathState.ALIGN_TO_ROW_2);
-                }
-                break;
-
-            case ALIGN_TO_ROW_2:
-                _follower.followPath(alignToRow2);
-                setPathState(PathState.ALIGNED_COMPLETE_2);
-                break;
-
-            case ALIGNED_COMPLETE_2:
                 if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
                     setPathState(PathState.LOADING_ROW_2);
                 }
                 break;
 
             case LOADING_ROW_2:
-                _follower.followPath(intakeRow2);
+                _follower.followPath(loadRow2);
                 setPathState(PathState.LOAD_COMPLETE_2);
                 break;
 
@@ -263,29 +226,18 @@ public class FinalTestAuto extends OpMode {
                 break;
 
             case PATH_TO_LOAD_ROW_3:
-                _follower.followPath(driveToRow3);
+                _follower.followPath(driveToRow3, true);
                 setPathState(PathState.PATH_TO_ROW_3_COMPLETE);
                 break;
 
             case PATH_TO_ROW_3_COMPLETE:
-                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
-                    setPathState(PathState.ALIGN_TO_ROW_3);
-                }
-                break;
-
-            case ALIGN_TO_ROW_3:
-                _follower.followPath(alignToRow3);
-                setPathState(PathState.ALIGNED_COMPLETE_3);
-                break;
-
-            case ALIGNED_COMPLETE_3:
                 if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
                     setPathState(PathState.LOADING_ROW_3);
                 }
                 break;
 
             case LOADING_ROW_3:
-                _follower.followPath(intakeRow3);
+                _follower.followPath(loadRow1);
                 setPathState(PathState.LOAD_COMPLETE_3);
                 break;
 

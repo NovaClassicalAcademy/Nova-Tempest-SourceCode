@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.DecodeChallenge.OpModes;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -26,18 +28,22 @@ public class AutoTestMK2 extends OpMode {
         STARTPOS_SHOOTPOS,
         SHOOT_AND_PRELOAD,
         FINAL_MOVEMENT,
-        FINAL_POS;
+        FINAL_POS,
+        DRUMROLL,
+        CHECK_HOLD;
 
     }
 
     PathState _pathstate;
 
-    private final Pose startPositon = new Pose(56, 37.04721030042918, Math.toRadians(90));
-    private final Pose shootPosition = new Pose(56, 90, Math.toRadians(90));
-    private final Pose finalPosition = new Pose(42, 68.58803777800841, Math.toRadians(90));
+    private final Pose startPositon = new Pose(59.486, 11.277, Math.toRadians(90));
+    private final Pose shootPosition = new Pose(56, 37.04721030042918, Math.toRadians(180));
+    private final Pose turnedPosition = new Pose(42, 68.58803777800841, Math.toRadians(180));
+    private final Pose finalPosition = new Pose(9.328591749644376, 68.58803777800841, Math.toRadians(180));
 
     private PathChain driveStatePosShootPos;
-    private PathChain driveRight;
+    private PathChain turn;
+    private PathChain moveRight;
 
     public void BuildPaths() {
         driveStatePosShootPos = _follower.pathBuilder()
@@ -45,9 +51,18 @@ public class AutoTestMK2 extends OpMode {
                 .setLinearHeadingInterpolation(startPositon.getHeading(), shootPosition.getHeading())
                 .build();
 
-        driveRight = _follower.pathBuilder()
-                .addPath(new BezierLine(shootPosition, finalPosition))
-                .setLinearHeadingInterpolation(shootPosition.getHeading(), finalPosition.getHeading())
+        turn = _follower.pathBuilder()
+                .addPath(new BezierCurve(
+                        new Pose (startPositon.getX(), startPositon.getY()),
+                        new Pose(50.771, 49.769),
+                        new Pose (turnedPosition.getX(), turnedPosition.getY())
+                ))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+
+        moveRight = _follower.pathBuilder()
+                .addPath(new BezierLine(turnedPosition,finalPosition))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
     }
 
@@ -72,13 +87,23 @@ public class AutoTestMK2 extends OpMode {
                 break;
 
             case FINAL_MOVEMENT:
-                _follower.followPath(driveRight, true);
+                _follower.followPath(turn, true);
                 setPathState(PathState.FINAL_POS);
                 break;
 
             case FINAL_POS:
                 telemetry.addLine("Done with Path 2");
+                setPathState(PathState.DRUMROLL);
+
+            case DRUMROLL:
+                _follower.followPath(moveRight, true);
+                setPathState(PathState.CHECK_HOLD);
                 break;
+
+            case CHECK_HOLD:
+                telemetry.addLine("Finsihed Route");
+                break;
+
 
             default:
                 telemetry.addLine("No State Commanded");
