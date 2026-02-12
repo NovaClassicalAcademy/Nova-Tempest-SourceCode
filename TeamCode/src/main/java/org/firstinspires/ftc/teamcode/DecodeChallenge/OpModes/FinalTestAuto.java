@@ -170,30 +170,29 @@ public class FinalTestAuto extends OpMode {
                 break;
 
             case PATH_TO_ROW_1_COMPLETE:
-                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
+                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.3) {
                     setPathState(PathState.LOADING_ROW_1);
                 }
                 break;
 
             case LOADING_ROW_1:
                 _follower.followPath(loadRow1, true);
-
                 setPathState(PathState.LOAD_COMPLETE_1);
                 break;
 
             case LOAD_COMPLETE_1:
-                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
+                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.3) {
                     setPathState(PathState.RETURN_HOME_1);
                 }
                 break;
 
             case RETURN_HOME_1:
-                _follower.followPath(returnHomeFrom1);
+                _follower.followPath(returnHomeFrom1, true);
                 setPathState(PathState.CHECK_AT_HOME_1);
                 break;
 
             case CHECK_AT_HOME_1:
-                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
+                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.3) {
                     setPathState(PathState.PATH_TO_LOAD_ROW_2);
                 }
                 break;
@@ -204,7 +203,7 @@ public class FinalTestAuto extends OpMode {
                 break;
 
             case PATH_TO_ROW_2_COMPLETE:
-                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
+                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.3) {
                     setPathState(PathState.LOADING_ROW_2);
                 }
                 break;
@@ -215,18 +214,18 @@ public class FinalTestAuto extends OpMode {
                 break;
 
             case LOAD_COMPLETE_2:
-                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
+                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.3) {
                     setPathState(PathState.RETURN_HOME_2);
                 }
                 break;
 
             case RETURN_HOME_2:
-                _follower.followPath(returnHomeFrom2);
+                _follower.followPath(returnHomeFrom2, true);
                 setPathState(PathState.CHECK_AT_HOME_2);
                 break;
 
             case CHECK_AT_HOME_2:
-                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
+                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.3) {
                     setPathState(PathState.PATH_TO_LOAD_ROW_3);
                 }
                 break;
@@ -237,7 +236,7 @@ public class FinalTestAuto extends OpMode {
                 break;
 
             case PATH_TO_ROW_3_COMPLETE:
-                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
+                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.3) {
                     setPathState(PathState.LOADING_ROW_3);
                 }
                 break;
@@ -248,18 +247,18 @@ public class FinalTestAuto extends OpMode {
                 break;
 
             case LOAD_COMPLETE_3:
-                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
+                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.3) {
                     setPathState(PathState.RETURN_HOME_3);
                 }
                 break;
 
             case RETURN_HOME_3:
-                _follower.followPath(returnHomeFrom3);
+                _follower.followPath(returnHomeFrom3, true);
                 setPathState(PathState.CHECK_AT_HOME_3);
                 break;
 
             case CHECK_AT_HOME_3:
-                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.1) {
+                if (!_follower.isBusy() && _pathTimer.getElapsedTimeSeconds() > 0.3) {
                     setPathState(PathState.MOVE_OUT_OF_LAUNCH);
                 }
                 break;
