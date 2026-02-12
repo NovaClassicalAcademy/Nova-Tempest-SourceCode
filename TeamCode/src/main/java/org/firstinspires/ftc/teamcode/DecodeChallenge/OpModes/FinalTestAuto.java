@@ -46,19 +46,19 @@ public class FinalTestAuto extends OpMode {
     PathState _pathstate;
 
     //------------Positions------------
-    private final Pose startPosition = new Pose(60.71123755334281, 11.072546230440972, Math.toRadians(90));
+    private final Pose startPosition = new Pose(58.244, 11.179, Math.toRadians(90));
 
-    private final Pose posRow1 = new Pose(41.97439544807963,35.61450924608818, Math.toRadians(180));
-    private final Pose intakePosRow1 = new Pose(10.981507823613088, 35.61450924608818, Math.toRadians(180));
+    private final Pose posRow1 = new Pose(40.510,35.111, Math.toRadians(180));
+    private final Pose intakePosRow1 = new Pose(12.928, 35.111, Math.toRadians(180));
 
-    private final Pose posRow2 = new Pose(60.71123755334281, 60.086772830679244, Math.toRadians(90));
-    private final Pose intakePosRow2 = new Pose(11.015274618134558, 60.086772830679244, Math.toRadians(180));
+    private final Pose posRow2 = new Pose(58.104, 11.301, Math.toRadians(90));
+    private final Pose intakePosRow2 = new Pose(9.939, 60.318, Math.toRadians(180));
 
-    private final Pose posRow3 = new Pose(41.24292426117511, 83.76372628379883, Math.toRadians(90));
-    private final Pose intakePosRow3 = new Pose(11.9372765680858, 83.76372628379883, Math.toRadians(180));
+    private final Pose posRow3 = new Pose(43.750, 84.518, Math.toRadians(90));
+    private final Pose intakePosRow3 = new Pose(11.408, 84.093, Math.toRadians(180));
 
-    private final Pose shootPosition = new Pose(60.71123755334281, 11.072546230440972, Math.toRadians(110)); //front is facing the basket. see how we need to switch sides.
-    private final Pose restPosition = new Pose(61.01462463438415, 42.78745531361716, Math.toRadians(90));
+    private final Pose shootPosition = new Pose(57.922, 11.488, Math.toRadians(110)); //front is facing the basket. see how we need to switch sides.
+    private final Pose restPosition = new Pose(57.922, 32.696, Math.toRadians(90));
 
     //-----------PathChains-----------
     private PathChain driveToRow1;
@@ -94,15 +94,17 @@ public class FinalTestAuto extends OpMode {
         driveToRow1 = _follower.pathBuilder()
                 .addPath(new BezierCurve(
                         new Pose(startPosition.getX(), startPosition.getY()),
-                        new Pose(78.020, 36.814),
+                        new Pose(73.754, 37.191),
                         new Pose(posRow1.getX(), posRow1.getY()))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setVelocityConstraint(12)
                 .build();
 
         loadRow1 = _follower.pathBuilder()
                 .addPath(new BezierLine(posRow1, intakePosRow1))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setVelocityConstraint(12)
                 .build();
 
         returnHomeFrom1 = _follower.pathBuilder()
@@ -113,14 +115,16 @@ public class FinalTestAuto extends OpMode {
         driveToRow2 = _follower.pathBuilder()
                 .addPath(new BezierCurve(
                         new Pose(shootPosition.getX(), shootPosition.getY()),
-                        new Pose(85.205, 59.957), ///TODO: NEED TO RESTART PATH
+                        new Pose(84.039, 59.839), ///TODO: NEED TO RESTART PATH
                         new Pose(posRow2.getX(), posRow2.getY())))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setVelocityConstraint(12)
                 .build();
 
         loadRow2 = _follower.pathBuilder()
                 .addPath(new BezierLine(posRow2, intakePosRow2))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setVelocityConstraint(12)
                 .build();
 
         returnHomeFrom2 = _follower.pathBuilder()
@@ -131,14 +135,16 @@ public class FinalTestAuto extends OpMode {
         driveToRow3 = _follower.pathBuilder()
                 .addPath(new BezierCurve(
                         new Pose(shootPosition.getX(), shootPosition.getY()),
-                        new Pose(106.081, 83.004),
+                        new Pose(83.630, 85.0),
                         new Pose(posRow3.getX(), posRow3.getY())))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setVelocityConstraint(12)
                 .build();
 
         loadRow3 = _follower.pathBuilder()
                 .addPath(new BezierLine(posRow3, intakePosRow3))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setVelocityConstraint(12)
                 .build();
 
         returnHomeFrom3 = _follower.pathBuilder()
@@ -170,7 +176,7 @@ public class FinalTestAuto extends OpMode {
                 break;
 
             case LOADING_ROW_1:
-                _follower.followPath(loadRow1);
+                _follower.followPath(loadRow1, true);
 
                 setPathState(PathState.LOAD_COMPLETE_1);
                 break;
@@ -204,7 +210,7 @@ public class FinalTestAuto extends OpMode {
                 break;
 
             case LOADING_ROW_2:
-                _follower.followPath(loadRow2);
+                _follower.followPath(loadRow2, true);
                 setPathState(PathState.LOAD_COMPLETE_2);
                 break;
 
@@ -237,7 +243,7 @@ public class FinalTestAuto extends OpMode {
                 break;
 
             case LOADING_ROW_3:
-                _follower.followPath(loadRow1);
+                _follower.followPath(loadRow3, true);
                 setPathState(PathState.LOAD_COMPLETE_3);
                 break;
 
