@@ -46,7 +46,7 @@ public class ColorSensor {
         //TODO might wanna adjust gain or comment /alpha to focus on closer ball
 
         /*
-        TODO not right needa fix
+        Yuh this right 2-11-26
                 red, green, blue
         GREEN = > 0.0020, > 0.0058, > 0.0047
 
@@ -54,10 +54,10 @@ public class ColorSensor {
         */
 
 
-        if((normRed > 0.0018 && normRed < 0.0022) && (normGreen > 0.0056 && normGreen < 0.0061) && (normBlue > 0.0043 && normBlue < 0.0050)){
+        if((normRed > 0.0014 && normRed < 0.0026) && (normGreen > 0.0052 && normGreen < 0.0064) && (normBlue > 0.0041 && normBlue < 0.0053)){
             return DetectedColor.GREEN;
         }
-        else if((normRed > 0.0032 && normRed < 0.0038) && (normGreen > 0.0047 && normGreen < 0.0053) && (normBlue > 0.0062 && normBlue < 0.0068)){
+        else if((normRed > 0.0029 && normRed < 0.0041) && (normGreen > 0.0044 && normGreen < 0.0056) && (normBlue > 0.0059 && normBlue < 0.0071)){
             return DetectedColor.PURPLE;
         }
         else{

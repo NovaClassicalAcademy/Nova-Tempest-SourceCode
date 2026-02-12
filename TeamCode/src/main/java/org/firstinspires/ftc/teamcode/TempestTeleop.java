@@ -194,6 +194,7 @@ public class TempestTeleop extends OpMode {
         double intakeDistance = distSensor.getDistance(DistanceUnit.INCH);
         //Color sensor values
         detectedColor = sight.getDetectedColor(telemetry);
+//        ColorSensor.DetectedColor currentColor = ColorSensor.DetectedColor.GREEN;
         telemetry.addData("ColorDetected", detectedColor);
         telemetry.addData("Distance", intakeDistance);
 
