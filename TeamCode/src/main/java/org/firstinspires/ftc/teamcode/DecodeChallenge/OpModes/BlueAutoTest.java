@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.DecodeChallenge.OpModes;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,11 +12,10 @@ import org.firstinspires.ftc.teamcode.DecodeChallenge.PedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.FireSequenceSystemStateMachine;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.RobotMapping;
 
-import java.nio.file.Path;
-
 @Autonomous (name = "BlueAutoTest", group = "Test")
 public class BlueAutoTest extends OpMode {
-    private enum PathState { START, ALIGN, LOAD, SHOOT, FINISH}
+    private enum PathState {START, ALIGN, LOAD, SHOOT, FINISH}
+
     private PathState _currentState = PathState.START;
 
     private Follower _follower;
@@ -45,47 +45,43 @@ public class BlueAutoTest extends OpMode {
     public void loop() {
         _follower.update();
 
-        switch (_currentState){
+        switch (_currentState) {
             case START:
                 _currentRow = 0;
-                _fireSequence.InitializeFar();
-                _follower.followPath(_bluePathing.PreloadedShoot);
-                setPathState(PathState.SHOOT);
+                _fireSequence.InitFarFireMode();
+                SetStartPath(PathState.SHOOT);
                 break;
 
             case SHOOT:
-                if (!_follower.isBusy() || _timeOut.seconds() > 1){
-                    _fireSequence.UpdateStatus();
-                }
+                if (!_follower.isBusy()) {
+                    _fireSequence.ProcessFireMode();
 
-                if (!_fireSequence.IsBusy()){
-                    _currentRow++;
+                    if (_fireSequence.IsComplete()) {
+                        _currentRow++;
 
-                    if (_currentRow >= 4){
-                        setPathState(PathState.FINISH);
-                    } else if (setRowAlignment(_currentRow)) {
-                        setPathState(PathState.ALIGN);
+                        if (_currentRow < 4) {
+                            SetNewPath(GetRowAlignment(_currentRow), PathState.ALIGN);
+                        } else {
+                            SetEndPath(PathState.FINISH);
+                        }
                     }
                 }
                 break;
 
             case ALIGN:
-                if (!_follower.isBusy() || _timeOut.seconds() > 1){
+                if (!_follower.isBusy()) {
                     _intake.Activate();
-
-                    if (setRowLoad(_currentRow)){
-                    setPathState(PathState.LOAD);
+                    SetNewPath(GetRowLoad(_currentRow), PathState.LOAD);
                     }
-                }
                 break;
 
             case LOAD:
-                if (!_follower.isBusy() || _timeOut.seconds() > 1){
+                if (!_follower.isBusy()) {
                     _intake.Deactivate();
+                    SetNewPath(GetRowShoot(_currentRow), PathState.SHOOT);
 
-                    if (setRowShoot(_currentRow)){
-                        _follower.followPath(_bluePathing.FinishPosition);
-                        setPathState(PathState.SHOOT);
+                    if (_currentRow < 4) {
+                        _fireSequence.InitFarFireMode();
                     }
                 }
                 break;
@@ -102,67 +98,76 @@ public class BlueAutoTest extends OpMode {
         telemetry.update();
     }
 
-    private  boolean setRowShoot(int currentRow){
-        switch (currentRow){
+    private PathChain GetRowShoot(int currentRow) {
+        PathChain results = null;
+
+        switch (currentRow) {
             case 1:
-                _follower.followPath(_bluePathing.FirstRowShoot);
-                return true;
+                results = _bluePathing.FirstRowShoot;
+                break;
 
             case 2:
-                _follower.followPath(_bluePathing.SecondRowShoot);
-                return true;
+                results = _bluePathing.SecondRowShoot;
+                break;
 
             case 3:
-                _follower.followPath(_bluePathing.ThirdRowShoot);
-                return true;
-
-            default:
-                telemetry.addLine("No Shoot Position");
-                return false;
+                results = _bluePathing.ThirdRowShoot;
+                break;
         }
+        return results;
     }
 
-    private boolean setRowLoad(int currentRow){
+    private PathChain GetRowLoad(int currentRow){
+        PathChain results = null;
+
         switch (currentRow){
             case 1:
-                _follower.followPath(_bluePathing.FirstRowLoad);
-                return true;
+                results = _bluePathing.FirstRowLoad;
+                break;
 
             case 2:
-                _follower.followPath(_bluePathing.SecondRowLoad);
-                return true;
+                results = _bluePathing.SecondRowLoad;
+                break;
 
             case 3:
-                _follower.followPath(_bluePathing.ThirdRowLoad);
-                return true;
-
-            default:
-                telemetry.addLine("No Row To Load");
-                return false;
+                results = _bluePathing.ThirdRowLoad;
+                break;
         }
+        return results;
     }
 
-    private boolean setRowAlignment(int currentRow){
+    private PathChain GetRowAlignment(int currentRow){
+        PathChain results = null;
         switch (currentRow){
             case 1:
-                _follower.followPath(_bluePathing.FirstRowAlign);
-                return true;
+                results = _bluePathing.FirstRowAlign;
+                break;
 
             case 2:
-                _follower.followPath(_bluePathing.SecondRowAlign);
-                return true;
+                results = _bluePathing.SecondRowAlign;
+                break;
 
             case 3:
-                _follower.followPath(_bluePathing.ThirdRowAlign);
-                return true;
-
-            default:
-                telemetry.addLine("No Row To Align");
-                return false;
+                results = _bluePathing.ThirdRowAlign;
+                break;
         }
+
+        return results;
+    }
+    private void SetNewPath(PathChain newPath, PathState newState){
+        _follower.followPath(newPath);
+        _currentState = newState;
+        _timeOut.reset();
     }
 
-    private void setPathState(PathState newState) {
+    private void SetStartPath(PathState newState){
+        _follower.followPath(_bluePathing.PreloadedShoot);
+        _currentState = newState;
+        _timeOut.reset();
+    }
+
+    private void SetEndPath(PathState newState){
+        _follower.followPath(_bluePathing.FinishPosition);
         _currentState = newState;
         _timeOut.reset();
     }

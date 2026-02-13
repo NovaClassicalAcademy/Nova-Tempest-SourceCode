@@ -9,9 +9,9 @@ import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.LaunchControll
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Controllers.ScooperController;
 
 public class FireSequenceSystemStateMachine {
-    public enum LaunchState {Idle, Initialize, BallSense, SpinningUp, Fire, Reset }
+    public enum LaunchState {Complete, Initialize, BallSense, SpinningUp, Fire, Reset }
     public enum LaunchDistance {Far, Close}
-    private LaunchState _currentState = LaunchState.Idle;
+    private LaunchState _currentState = LaunchState.Complete;
     private final Telemetry _telemetry;
     private final LaunchController _launcher;
     private final ScooperController _scooper;
@@ -24,7 +24,7 @@ public class FireSequenceSystemStateMachine {
     private final double FAR_LAUNCH_VELOCITY = 2500;
     private final double CLOSE_LAUNCH_VELOCITY = 2000;
 
-    private final double BALL_PRESENT_DISTANCE = 4.0;
+    private final double BALL_PRESENT_DISTANCE = 4;
     private final double SCOOP_UP_TIME = 0.8;
     private final double SCOOP_DOWN_TIME = 0.8;
     private final double MAX_TIME_OUT = 1.0;
@@ -34,10 +34,10 @@ public class FireSequenceSystemStateMachine {
         _intake = new IntakeController(rc.UpperLeftIntake, rc.UpperRightIntake, rc.LowerLeftIntake, rc.LowerRightIntake);
         _launcher = new LaunchController(rc.Goat);
         _scooper = new ScooperController(rc.Scooper);
-        _distanceSensor = new DistanceSensorController(rc.FrontColorSensor);
+        _distanceSensor = new DistanceSensorController(rc.RearColorSensor);
     }
 
-    public void InitializeFar(){
+    public void InitFarFireMode(){
         _launcher.StartVelocity(FAR_LAUNCH_VELOCITY);
         ChangeState(LaunchState.Initialize);
     }
@@ -47,11 +47,11 @@ public class FireSequenceSystemStateMachine {
         ChangeState(LaunchState.Initialize);
     }
 
-    public boolean IsBusy(){
-        return _currentState != LaunchState.Idle;
+    public boolean IsComplete(){
+        return _currentState == LaunchState.Complete;
     }
 
-    public void UpdateStatus() {
+    public void ProcessFireMode() {
         _telemetry.addData("Fire State: ", _currentState);
         _distanceSensor.DebugOutuput(_telemetry);
         _launcher.ReportVelocity(_telemetry);
@@ -67,13 +67,15 @@ public class FireSequenceSystemStateMachine {
                 break;
 
             case BallSense:
-                if (_distanceSensor.GetDistanceCm() < BALL_PRESENT_DISTANCE || _stateTimer.seconds() > MAX_TIME_OUT) {
+                if (_distanceSensor.GetDistanceInches() < BALL_PRESENT_DISTANCE || _stateTimer.seconds() > MAX_TIME_OUT) {
+                    _telemetry.addLine("Ball is Seen");
                     ChangeState(LaunchState.SpinningUp);
                 }
                 break;
 
             case SpinningUp:
                 if (_launcher.IsAtFullSpeed() || _stateTimer.seconds() > MAX_TIME_OUT) {
+                    _launcher.ReportVelocity(_telemetry);
                     ChangeState(LaunchState.Fire);
                 }
                 break;
@@ -83,6 +85,7 @@ public class FireSequenceSystemStateMachine {
                 _intake.Activate();
 
                 if (_stateTimer.seconds() > SCOOP_UP_TIME) {
+                    _telemetry.addLine("Shot a Ball");
                     _shotsRemaining--;
                     _intake.Deactivate();
 
@@ -95,10 +98,12 @@ public class FireSequenceSystemStateMachine {
 
                 if (_stateTimer.seconds() > SCOOP_DOWN_TIME){
                     if (_shotsRemaining > 0){
+                        _telemetry.addData("Shots Left: ", _shotsRemaining);
                         ChangeState(LaunchState.BallSense);
                     } else {
                         _launcher.Stop();
-                        ChangeState(LaunchState.Idle);
+                        _telemetry.addLine("Finished");
+                        ChangeState(LaunchState.Complete);
                     }
                 }
                 break;

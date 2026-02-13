@@ -21,8 +21,10 @@ public class DetectSensorTest extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("Front: ", _distanceFront.GetDistanceInches());
-        telemetry.addData("Rear: ", _distanceRear.GetDistanceInches());
+        telemetry.addData("Front IN: ", _distanceFront.GetDistanceInches());
+        telemetry.addData("Rear IN: ", _distanceRear.GetDistanceInches());
+        telemetry.addData("Front CM: ", _distanceFront.GetDistanceCm());
+        telemetry.addData("Rear CM: ", _distanceRear.GetDistanceCm());
         telemetry.update();
     }
 }

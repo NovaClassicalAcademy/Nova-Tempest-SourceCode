@@ -37,24 +37,24 @@ public class BlueFullRunPathing {
         FirstRowAlign = follower.pathBuilder().addPath(
                         new BezierCurve(
                                 new Pose(60.000, 25.000),
-                                new Pose(65.000, 35.000),
-                                new Pose(42.000, 35.500)
+                                new Pose(65.000, 33.000),
+                                new Pose(42.000, 33.500)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(180))
                 .build();
 
         FirstRowLoad = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(42.000, 35.500),
-                                new Pose(15.000, 35.500)
+                                new Pose(42.000, 33.500),
+                                new Pose(15.000, 33.500)
                         )
-                ).addParametricCallback(0.1, ()-> follower.setMaxPower(0.25))
+                ).addParametricCallback(0.0, ()-> follower.setMaxPower(0.25))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
         FirstRowShoot = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(15.000, 35.500),
+                                new Pose(15.000, 33.500),
                                 new Pose(60.000, 25.000)
                         )
                 ).addParametricCallback(0.0, ()-> follower.setMaxPower(1))
@@ -65,15 +65,15 @@ public class BlueFullRunPathing {
                         new BezierCurve(
                                 new Pose(60.000, 25.000),
                                 new Pose(75.000, 60.000),
-                                new Pose(42.000, 60.000)
+                                new Pose(42.000, 57.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(180))
                 .build();
 
         SecondRowLoad = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(42.000, 60.000),
-                                new Pose(15.000, 60.000)
+                                new Pose(42.000, 57.000),
+                                new Pose(15.000, 57.000)
                         )
                 ).addParametricCallback(0.1, ()-> follower.setMaxPower(0.25))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -81,7 +81,7 @@ public class BlueFullRunPathing {
 
         SecondRowShoot = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(15.000, 60.000),
+                                new Pose(15.000, 57.000),
                                 new Pose(60.000, 25.000)
                         )
                 ).addParametricCallback(0.0, ()-> follower.setMaxPower(1))
@@ -92,15 +92,15 @@ public class BlueFullRunPathing {
                         new BezierCurve(
                                 new Pose(60.000, 25.000),
                                 new Pose(75.000, 90.000),
-                                new Pose(42.000, 84.000)
+                                new Pose(42.000, 80.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(180))
                 .build();
 
         ThirdRowLoad = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(42.000, 84.000),
-                                new Pose(15.000, 84.000)
+                                new Pose(42.000, 80.000),
+                                new Pose(15.000, 80.000)
                         )
                 ).addParametricCallback(0.1, ()-> follower.setMaxPower(0.25))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -108,7 +108,7 @@ public class BlueFullRunPathing {
 
         ThirdRowShoot = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(15.000, 84.000),
+                                new Pose(15.000, 80.000),
                                 new Pose(60.000, 25.000)
                         )
                 ).addParametricCallback(0.0, ()-> follower.setMaxPower(1))

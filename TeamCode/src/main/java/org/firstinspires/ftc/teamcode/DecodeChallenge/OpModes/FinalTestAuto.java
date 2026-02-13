@@ -4,14 +4,12 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.PedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.FireSequenceSystemStateMachine;
 import org.firstinspires.ftc.teamcode.DecodeChallenge.Systems.RobotMapping;
@@ -98,7 +96,7 @@ public class FinalTestAuto extends OpMode {
         _fireSequence = new FireSequenceSystemStateMachine(telemetry, _robotMapping);
 
         BuildPaths();
-        _fireSequence.UpdateStatus();
+        _fireSequence.ProcessFireMode();
         _follower.setPose(startPosition);
     }
 

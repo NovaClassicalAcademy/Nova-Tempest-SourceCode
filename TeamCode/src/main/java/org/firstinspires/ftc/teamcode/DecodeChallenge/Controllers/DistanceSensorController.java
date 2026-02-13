@@ -22,7 +22,7 @@ public class DistanceSensorController {
         return _distanceSensor.getDistance(DistanceUnit.CM);
     }
 
-    public void DebugOutuput(Telemetry tele){
-        tele.addData("Ball Dist: ", _distanceSensor.getDistance(DistanceUnit.INCH));
+    public void DebugOutuput(Telemetry telemetry){
+        telemetry.addData("Ball Dist: ", _distanceSensor.getDistance(DistanceUnit.INCH));
     }
 }
