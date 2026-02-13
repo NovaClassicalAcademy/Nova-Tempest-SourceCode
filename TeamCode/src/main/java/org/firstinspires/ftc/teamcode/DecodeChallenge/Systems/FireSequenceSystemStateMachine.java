@@ -21,38 +21,37 @@ public class FireSequenceSystemStateMachine {
 
     public  int _shotsRemaining = 0;
 
-    private final double FAR_LAUNCH_VELOCITY = 6000;
-    private final double CLOSE_LAUNCH_VELOCITY = 5000;
+    private final double FAR_LAUNCH_VELOCITY = 2500;
+    private final double CLOSE_LAUNCH_VELOCITY = 2000;
 
-    private final double BALL_PRESENT_DISTANCE = 2.0;
+    private final double BALL_PRESENT_DISTANCE = 4.0;
     private final double SCOOP_UP_TIME = 0.8;
     private final double SCOOP_DOWN_TIME = 0.8;
-    private final double MAX_SPIN_UP_TIME = 1.5;
+    private final double MAX_TIME_OUT = 1.0;
 
     public FireSequenceSystemStateMachine(Telemetry telemetry, RobotMapping rc) {
         _telemetry = telemetry;
         _intake = new IntakeController(rc.UpperLeftIntake, rc.UpperRightIntake, rc.LowerLeftIntake, rc.LowerRightIntake);
         _launcher = new LaunchController(rc.Goat);
         _scooper = new ScooperController(rc.Scooper);
-        _distanceSensor = new DistanceSensorController(rc.ColorSensor);
+        _distanceSensor = new DistanceSensorController(rc.FrontColorSensor);
     }
 
-    public void InitializeSpinUp(LaunchDistance launchDistance){
-        switch (launchDistance){
-            case Far:
-                _launcher.StartVelocity(FAR_LAUNCH_VELOCITY);
-                break;
-
-            case Close:
-                _launcher.StartVelocity(CLOSE_LAUNCH_VELOCITY);
-                break;
-
-            default:
-                _telemetry.addLine("No Launch Distance Commanded");
-        }
+    public void InitializeFar(){
+        _launcher.StartVelocity(FAR_LAUNCH_VELOCITY);
+        ChangeState(LaunchState.Initialize);
     }
 
-    public LaunchState GetStatus() {
+    public void InitializeClose(){
+        _launcher.StartVelocity(CLOSE_LAUNCH_VELOCITY);
+        ChangeState(LaunchState.Initialize);
+    }
+
+    public boolean IsBusy(){
+        return _currentState != LaunchState.Idle;
+    }
+
+    public void UpdateStatus() {
         _telemetry.addData("Fire State: ", _currentState);
         _distanceSensor.DebugOutuput(_telemetry);
         _launcher.ReportVelocity(_telemetry);
@@ -60,25 +59,21 @@ public class FireSequenceSystemStateMachine {
         switch (_currentState) {
             case Initialize:
                 _shotsRemaining = 3;
-                ChangeState(LaunchState.Idle);
-                break;
-
-            case Idle:
                 _scooper.ScoopDown();
 
-                if (_shotsRemaining > 0 || _stateTimer.seconds() > 2) {
+                if (_shotsRemaining > 0 || _stateTimer.seconds() > MAX_TIME_OUT) {
                     ChangeState(LaunchState.BallSense);
                 }
                 break;
 
             case BallSense:
-                if (_distanceSensor.GetDistanceCm() < BALL_PRESENT_DISTANCE || _stateTimer.seconds() > 2) {
+                if (_distanceSensor.GetDistanceCm() < BALL_PRESENT_DISTANCE || _stateTimer.seconds() > MAX_TIME_OUT) {
                     ChangeState(LaunchState.SpinningUp);
                 }
                 break;
 
             case SpinningUp:
-                if (_launcher.IsAtFullSpeed() || _stateTimer.seconds() > MAX_SPIN_UP_TIME) {
+                if (_launcher.IsAtFullSpeed() || _stateTimer.seconds() > MAX_TIME_OUT) {
                     ChangeState(LaunchState.Fire);
                 }
                 break;
@@ -90,6 +85,7 @@ public class FireSequenceSystemStateMachine {
                 if (_stateTimer.seconds() > SCOOP_UP_TIME) {
                     _shotsRemaining--;
                     _intake.Deactivate();
+
                     ChangeState(LaunchState.Reset);
                 }
                 break;
@@ -102,20 +98,15 @@ public class FireSequenceSystemStateMachine {
                         ChangeState(LaunchState.BallSense);
                     } else {
                         _launcher.Stop();
-                        _currentState = LaunchState.Idle;
+                        ChangeState(LaunchState.Idle);
                     }
                 }
                 break;
         }
-        return _currentState;
     }
 
     private void ChangeState(LaunchState newState){
         _currentState = newState;
         _stateTimer.reset();
-    }
-
-    public void startSequence(int count){
-        _shotsRemaining = count;
     }
 }

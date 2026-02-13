@@ -14,16 +14,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .forwardZeroPowerAcceleration(-30.87715503481507)
-            .lateralZeroPowerAcceleration(-68.32576493005507)
+            .forwardZeroPowerAcceleration(-30)
+            .lateralZeroPowerAcceleration(-75)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0, 0))
-            .headingPIDFCoefficients(new PIDFCoefficients(1, 0, 0,0.01))
+            .headingPIDFCoefficients(new PIDFCoefficients(1, 0, 0.5,0.01))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.025, 0, 0.0001, 0.6, 0.01))
             .centripetalScaling(0.0005)
             .useSecondaryTranslationalPIDF(true)
             .useSecondaryHeadingPIDF(true)
             .useSecondaryDrivePIDF(true)
-            .mass(10);
+            .mass(5);
 
     public static PathConstraints pathConstraints = new PathConstraints(
             0.99,
@@ -41,8 +41,8 @@ public class Constants {
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
-            .xVelocity(61.26415406706444)
-            .yVelocity(47.73220136122349)
+            .xVelocity(83)
+            .yVelocity(61)
             .leftFrontMotorName("FrontLeft")
             .rightFrontMotorName("FrontRight")
             .leftRearMotorName("BackLeft")
@@ -53,9 +53,9 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
 
     public static ThreeWheelConstants localizerConstants = new ThreeWheelConstants()
-            .forwardTicksToInches(0.0021630231622300888)
-            .strafeTicksToInches(0.0021975519098540097)
-            .turnTicksToInches(0.003061128699210547)
+            .forwardTicksToInches(0.003)
+            .strafeTicksToInches(0.003)
+            .turnTicksToInches(0.003)
             .leftPodY(7)
             .rightPodY(-7)
             .strafePodX(-2.5)

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.DecodeChallenge.Systems;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,7 +15,8 @@ public class RobotMapping {
     public CRServo LowerLeftIntake, LowerRightIntake, UpperLeftIntake, UpperRightIntake;
     public DcMotorEx Goat;
     public Servo Scooper;
-    public NormalizedColorSensor ColorSensor;
+    public NormalizedColorSensor FrontColorSensor;
+    public NormalizedColorSensor RearColorSensor;
     public WebcamName Webcam;
 
     private final HardwareMap _hardwareMap;
@@ -106,7 +106,8 @@ public class RobotMapping {
     }
 
     private void InitColorSensor() {
-        ColorSensor = _hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");
+        RearColorSensor = _hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");
+        FrontColorSensor = _hardwareMap.get(NormalizedColorSensor.class, "CSintake");
     }
 
     private void InitWebcam() {
