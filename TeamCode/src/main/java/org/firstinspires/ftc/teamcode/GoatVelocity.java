@@ -5,23 +5,25 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "Launcher - Velocity Control")
 public class GoatVelocity extends LinearOpMode {
 
+    Servo lever;
     private DcMotorEx launcher = null;
     private ElapsedTime timer = new ElapsedTime();
 
     // --- CONFIGURE THESE for your hardware ---
     private static final String LAUNCHER_NAME = "Goat";
-    private static final int TICKS_PER_REV = 1;            // TODO replace with your encoder ticks per motor rev
+    private static final int TICKS_PER_REV = 28;            // TODO replace with your encoder ticks per motor rev
     private static final double GEAR_RATIO = 1.0;           // outputRev = motorRev * (1/gearRatio) depending on definition
     // If output is direct: GEAR_RATIO = 1.0
     // If motor turns faster than wheel, adjust accordingly
 
     // Example target RPM for launcher wheel
-    private static final double TARGET_RPM = -6000;
+    private static final double TARGET_RPM = 6000;
 
     // Safety/timeouts
     private static final double SPINUP_TIMEOUT = 4.0; // seconds to wait for spin-up
@@ -31,11 +33,15 @@ public class GoatVelocity extends LinearOpMode {
         launcher = hardwareMap.get(DcMotorEx.class, LAUNCHER_NAME);
         // motor direction depending on how you wired it
         launcher.setDirection(DcMotor.Direction.REVERSE);
-        launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // ensure using encoder
 
+        HardwareClass _hardware = new HardwareClass();
+        _hardware.Init(hardwareMap);
 
         // Use RUN_USING_ENCODER so velocity control uses encoder feedback
         launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        lever = hardwareMap.get(Servo.class, "scooper");
+
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -51,11 +57,12 @@ public class GoatVelocity extends LinearOpMode {
 
             double rpmAdjust = -gamepad1.left_stick_y * 200.0; // adjust +/- 200 RPM per full stick
             double targetRPM = TARGET_RPM + rpmAdjust;
+            double Velocity = launcher.getVelocity();
 
             if (gamepad1.a) {
                 // Convert target RPM to ticks per second
-                double ticksPerSecond = rpmToTicksPerSecond(TARGET_RPM, TICKS_PER_REV, GEAR_RATIO);
-//                launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // ensure using encoder
+                double ticksPerSecond = rpmToTicksPerSecond(targetRPM, TICKS_PER_REV, GEAR_RATIO);
+                launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // ensure using encoder
                 launcher.setVelocity(ticksPerSecond); // DcMotorEx uses ticks/sec
                 timer.reset();
                 // Wait up to SPINUP_TIMEOUT for RPM to stabilize (optional)
@@ -72,13 +79,23 @@ public class GoatVelocity extends LinearOpMode {
                 launcher.setPower(1.0);
             } else {
                 // if no buttons, optionally hold velocity or do nothing
-                // launcher.setPower(0); // uncomment to stop when no command
+                launcher.setPower(0); // uncomment to stop when no command
+            }
+
+            //lever
+            if(gamepad1.right_bumper){
+                lever.setPosition(0.25);
+            }
+            else{
+                lever.setPosition(0);
             }
 
             telemetry.addData("Target RPM", "%.1f", targetRPM);
             double currentTps = launcher.getVelocity();
             double currentRPM = ticksPerSecondToRpm(currentTps, TICKS_PER_REV, GEAR_RATIO);
             telemetry.addData("Current RPM", "%.1f", currentRPM);
+            telemetry.addData("Velocity",Velocity);
+            telemetry.addData("ticksPerRev",launcher.getCurrentPosition());
             telemetry.update();
 
             idle();
