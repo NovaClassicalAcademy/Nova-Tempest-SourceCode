@@ -21,7 +21,7 @@ public class FireSequenceSystemStateMachine {
 
     public  int _shotsRemaining = 0;
 
-    private final double FAR_LAUNCH_VELOCITY = 2500;
+    private final double FAR_LAUNCH_VELOCITY = 5100;
     private final double CLOSE_LAUNCH_VELOCITY = 2000;
 
     private final double BALL_PRESENT_DISTANCE = 4;
