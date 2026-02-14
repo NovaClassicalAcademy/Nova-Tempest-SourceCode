@@ -197,6 +197,8 @@ public class TempestTeleop extends OpMode {
         telemetry.addData("ColorDetected", detectedColor);
         telemetry.addData("Distance", intakeDistance);
 
+
+
         if(intakeDistance < 5){
             // Turn on
             blueLED.setState(false);
