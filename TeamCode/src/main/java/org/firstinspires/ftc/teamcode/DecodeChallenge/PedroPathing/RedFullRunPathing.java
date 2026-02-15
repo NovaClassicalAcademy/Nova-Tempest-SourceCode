@@ -29,98 +29,98 @@ public class RedFullRunPathing {
         PreloadedShoot = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(80.000, 8.000),
-                                new Pose(81.000, 25.000)
+                                new Pose(81.000, 19)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(245))
+                ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(244))
                 .build();
 
         FirstRowAlign = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(81.000, 25.000),
+                                new Pose(81.000, 19),
                                 new Pose(86.000, 33.000),
-                                new Pose(100.000, 33.000)
+                                new Pose(90, 33.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(244), Math.toRadians(0))
                 .build();
 
         FirstRowLoad = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(100.000, 33.000),
-                                new Pose(130.000, 33.000)
+                                new Pose(90, 33.000),
+                                new Pose(132, 33.000)
                         )
                 ).addParametricCallback(0.0, ()-> follower.setMaxPower(0.25))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         FirstRowShoot = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(130.000, 33.000),
-                                new Pose(81.000, 25.000)
+                                new Pose(132, 33.000),
+                                new Pose(81.000, 19)
                         )
                 ).addParametricCallback(0.0, ()-> follower.setMaxPower(1))
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(290))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(244))
                 .build();
 
         SecondRowAlign = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(81.000, 25.000),
+                                new Pose(81.000, 19),
                                 new Pose(80.000, 57.000),
-                                new Pose(102.000, 57.000)
+                                new Pose(90, 57.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(244), Math.toRadians(0))
                 .build();
 
         SecondRowLoad = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(102.000, 57.000),
-                                new Pose(130.000, 57.000)
+                                new Pose(90, 57.000),
+                                new Pose(132, 57.000)
                         )
-                ).addParametricCallback(0.1, ()-> follower.setMaxPower(0.25))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                ).addParametricCallback(0.0, ()-> follower.setMaxPower(0.25))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         SecondRowShoot = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(130.000, 57.000),
-                                new Pose(81.000, 25.000)
+                                new Pose(132, 57.000),
+                                new Pose(81.000, 19)
                         )
                 ).addParametricCallback(0.0, ()-> follower.setMaxPower(1))
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(290))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(244))
                 .build();
 
         ThirdRowAlign = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(81.000, 25.000),
+                                new Pose(81.000, 19),
                                 new Pose(79.000, 80.000),
-                                new Pose(105.000, 80.000)
+                                new Pose(90, 80.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(244), Math.toRadians(0))
                 .build();
 
         ThirdRowLoad = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(105.000, 80.000),
-                                new Pose(130.000, 80.000)
+                                new Pose(90, 80.000),
+                                new Pose(132, 80.000)
                         )
-                ).addParametricCallback(0.1, ()-> follower.setMaxPower(0.25))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                ).addParametricCallback(0.0, ()-> follower.setMaxPower(0.25))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         ThirdRowShoot = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(130.000, 80.000),
-                                new Pose(81.000, 25.000)
+                                new Pose(132, 80.000),
+                                new Pose(81.000, 19)
                         )
                 ).addParametricCallback(0.0, ()-> follower.setMaxPower(1))
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(290))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(22))
                 .build();
 
         FinishPosition = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(81.000, 25.000),
+                                new Pose(81.000, 21),
                                 new Pose(81.000, 38.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(270))
+                ).setLinearHeadingInterpolation(Math.toRadians(244), Math.toRadians(270))
 
                 .build();
     }
